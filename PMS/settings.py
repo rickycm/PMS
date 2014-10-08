@@ -41,7 +41,7 @@ INSTALLED_APPS = (
     'bootstrap3',
     'awesome_bootstrap',
     'bootstrap3_datetime',
-    'south',
+    #'south',
     #'userena',
     #'guardian',
     #'easy_thumbnails',
@@ -123,3 +123,6 @@ EMAIL_HOST_PASSWORD = 'olag2ken'
 
 #============= Userena ====================
 '''
+
+
+AUTH_PROFILE_MODULE = 'PmsApp.UserProfile'
