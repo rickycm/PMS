@@ -1,3 +1,4 @@
+# coding:utf8
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -7,6 +8,13 @@ P_STATUS = [(1, u'Free to rent'), (2, u'Rented'), (3, u'')]
 PERSON_TYPE = [(1, u'Person'), (2, u'Company'), (3, u'Family')]
 RENTAL_TYPE = [(1, u'Monthly'), (2, u'Quarterly'), (3, u'Yearly')]
 USER_TYPE = [(1, u'Manager'), (2, u'Owner'), (3, u'Tenant')]
+
+
+class ManagerCompany(models.Model):
+    mc_name = models.CharField(max_length=200, blank=True, null=True)
+    mc_phone = models.CharField(max_length=20, blank=True, null=True)
+    mc_address = models.CharField(max_length=200, blank=True, null=True)
+    mc_email = models.EmailField(max_length=1000, verbose_name='e-mail', blank=True, null=True)
 
 
 class UserProfile(models.Model):
@@ -31,7 +39,7 @@ def create_user_profile(sender, instance, created, **kwargs):
         profile.user = instance
         profile.save()
 
-post_save.connect(create_user_profile, sender=User)
+#post_save.connect(create_user_profile, sender=User)
 
 '''
 class TenantInfo(models.Model):
@@ -50,12 +58,6 @@ class OwnerInfo(models.Model):
     o_email = models.EmailField(max_length=1000, verbose_name='e-mail', blank=True, null=True)
 '''
 
-
-class ManagerCompany(models.Model):
-    mc_name = models.CharField(max_length=200, blank=True, null=True)
-    mc_phone = models.CharField(max_length=20, blank=True, null=True)
-    mc_address = models.CharField(max_length=200, blank=True, null=True)
-    mc_email = models.EmailField(max_length=1000, verbose_name='e-mail', blank=True, null=True)
 
 '''
 class ManagerInfo(models.Model):
@@ -80,6 +82,15 @@ class Property(models.Model):
     p_status = models.IntegerField(choices=P_STATUS, default=1, blank=True, null=True)
     p_rent_circle = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True)
     p_rent_price = models.IntegerField(blank=True, null=True)
+    p_add_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Property'
+        verbose_name_plural = 'Properties'
+        ordering = ['p_add_date']
+
+    def __unicode__(self):
+        return self.p_name
 
 
 class RentalBill(models.Model):
@@ -91,3 +102,13 @@ class RentalBill(models.Model):
     rb_type = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True)
     rb_payer_name = models.CharField(max_length=200, blank=True, null=True)
     rb_note = models.CharField(max_length=2000, blank=True, null=True)
+
+
+class MaintanceBill(models.Model):
+    mb_property = models.ForeignKey(Property)
+    mb_billdate = models.DateField(blank=True, null=True)
+    mb_should_pay_date = models.DateField(blank=True, null=True)
+    mb_actual_pay_date = models.DateField(blank=True, null=True)
+    mb_billtype = models.CharField(max_length=200, blank=True, null=True)
+    mb_payer_name = models.CharField(max_length=200, blank=True, null=True)
+    mb_note = models.CharField(max_length=2000, blank=True, null=True)

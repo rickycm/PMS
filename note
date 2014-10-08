@@ -1,0 +1,7 @@
+/Users/ricky/env/python2.7/lib/python2.7/site-packages/bootstrap_admin/templates/admin/edit_inline/stacked.html
+
+
+4. 现在可以利用内建的 User 模型的 get_profile 方法获取到对应的 Profile 对象：
+from django.contrib.auth.models import User
+u = User.objects.get(pk=1) # Get the first user in the system
+user_address = u.get_profile().home_address
