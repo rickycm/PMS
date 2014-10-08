@@ -41,7 +41,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 #post_save.connect(create_user_profile, sender=User)
 
-'''
+
 class TenantInfo(models.Model):
     t_name = models.CharField(max_length=200, blank=True, null=True)
     t_tpye = models.IntegerField(choices=PERSON_TYPE, default=1)
@@ -49,7 +49,7 @@ class TenantInfo(models.Model):
     t_address = models.CharField(max_length=20, blank=True, null=True)
     t_email = models.EmailField(max_length=1000, verbose_name='e-mail', blank=True, null=True)
 
-
+'''
 class OwnerInfo(models.Model):
     o_name = models.CharField(max_length=200, blank=True, null=True)
     o_tpye = models.IntegerField(choices=PERSON_TYPE, default=1)
@@ -76,7 +76,7 @@ class Property(models.Model):
     p_address = models.CharField(max_length=20, blank=True, null=True)
     p_owner = models.ForeignKey(User, related_name='owner')
     p_manager = models.ForeignKey(User, related_name='manager', blank=True, null=True)
-    p_tenant = models.ForeignKey(User, blank=True, null=True)
+    p_tenant = models.ForeignKey(TenantInfo, blank=True, null=True)
     p_area = models.CharField(max_length=200, blank=True, null=True)
     p_buildtime = models.DateField(blank=True, null=True)
     p_status = models.IntegerField(choices=P_STATUS, default=1, blank=True, null=True)
