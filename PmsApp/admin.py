@@ -24,6 +24,30 @@ class PropertyAdmin(admin.ModelAdmin):
 admin.site.register(Property, PropertyAdmin)
 
 
+class ManagerCompanyAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(ManagerCompany, ManagerCompanyAdmin)
+
+
+class TenantInfoAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(TenantInfo, TenantInfoAdmin)
+
+
+class RentalBillAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(RentalBill, RentalBillAdmin)
+
+
+class MaintanceBillAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(MaintanceBill, MaintanceBillAdmin)
+
+
 # Re-register UserAdmin
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)

@@ -43,7 +43,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 
 class TenantInfo(models.Model):
-    t_name = models.CharField(max_length=200, blank=True, null=True)
+    t_name = models.CharField(max_length=200, blank=True, null=True, verbose_name='Tenant Name')
     t_tpye = models.IntegerField(choices=PERSON_TYPE, default=1)
     t_phone = models.CharField(max_length=20, blank=True, null=True)
     t_address = models.CharField(max_length=20, blank=True, null=True)
@@ -71,7 +71,7 @@ class ManagerInfo(models.Model):
 
 
 class Property(models.Model):
-    p_name = models.CharField(max_length=200, blank=True, null=True)
+    p_name = models.CharField(max_length=200, blank=True, null=True, verbose_name='Property Name')
     p_type = models.IntegerField(choices=P_TYPE, default=1, blank=True, null=True)
     p_address = models.CharField(max_length=20, blank=True, null=True)
     p_owner = models.ForeignKey(User, related_name='owner')
@@ -94,14 +94,14 @@ class Property(models.Model):
 
 
 class RentalBill(models.Model):
-    rb_property = models.ForeignKey(Property)
-    rb_period_start = models.DateField(blank=True, null=True)
-    rb_period_end = models.DateField(blank=True, null=True)
-    rb_should_pay_date = models.DateField(blank=True, null=True)
-    rb_actual_pay_date = models.DateField(blank=True, null=True)
-    rb_type = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True)
-    rb_payer_name = models.CharField(max_length=200, blank=True, null=True)
-    rb_note = models.CharField(max_length=2000, blank=True, null=True)
+    rb_property = models.ForeignKey(Property, verbose_name='Property')
+    rb_period_start = models.DateField(blank=True, null=True, verbose_name='Start Date')
+    rb_period_end = models.DateField(blank=True, null=True, verbose_name='End Date')
+    rb_should_pay_date = models.DateField(blank=True, null=True, verbose_name='Due Date')
+    rb_actual_pay_date = models.DateField(blank=True, null=True, verbose_name='Pay Date')
+    rb_type = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True, verbose_name='Type')
+    rb_payer_name = models.CharField(max_length=200, blank=True, null=True, verbose_name='Payer name')
+    rb_note = models.CharField(max_length=2000, blank=True, null=True, verbose_name='Note')
 
 
 class MaintanceBill(models.Model):
