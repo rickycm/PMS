@@ -13,5 +13,8 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', index),
+    url(r'^property/list/$', property_list),
+    #(r'^accounts/login/$', 'django.contrib.auth.views.login'),
+    (r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
     #(r'^accounts/', include('userena.urls')),
 )

@@ -2,7 +2,9 @@
 <html lang="en">
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <title>{% block title %}{% endblock %}</title>
+
     <head>
+    {% block pagehead %}
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="" />
         <meta name="Ricky Chi" content="stilearning" />
@@ -26,14 +28,20 @@
         <!--[if lt IE 9]>
           <script src="/static/js/html5.js"></script>
         <![endif]-->
-
+    {% endblock %}
     </head>
+
     <body>
+
         {% block content %}
         {% endblock %}
 
+        <!-- section footer -->
+        <footer>
         {% block footer %}
+            <a rel="to-top" href="#top"><i class="icofont-circle-arrow-up"></i></a>
         {% endblock%}
+        </footer>
 
         {% block footerjs %}
 
@@ -55,6 +63,8 @@
             <!-- required stilearn template js, for full feature-->
             <script src="/static/js/holder.js"></script>
             <script src="/static/js/stilearn-base.js"></script>
+
+
 
         {% endblock %}
     </body>
