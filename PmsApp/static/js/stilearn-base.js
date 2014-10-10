@@ -9,7 +9,7 @@ $(function(){
     +'    </ul>'
     +'    <div class="navigate-mode"><a href="#" class="grd-teal corner-bottom"><i class="typicn-cog"></i></a></div>'
     +'</div>';
-    
+
     $('body').append(control_mode)
     if(sessionStorage.mode == undefined){
         sessionStorage.mode = 1;

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %} {{ title }}{% endblock %}</title>
 
     <head>
     {% block pagehead %}
@@ -62,7 +62,7 @@
 
             <!-- required stilearn template js, for full feature-->
             <script src="/static/js/holder.js"></script>
-            <script src="/static/js/stilearn-base.js"></script>
+            <!--<script src="/static/js/stilearn-base.js"></script>-->
 
 
 
