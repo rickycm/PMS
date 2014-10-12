@@ -19,4 +19,6 @@ urlpatterns = patterns('',
     (r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
     (r'^login-form/$', views.login_form),
     #(r'^accounts/', include('userena.urls')),
+    #(r'^property/$', views.PropertyList.as_view()),
+    #(r'^patients/(?P<pk>[0-9]+)/$', views.PatientDetail.as_view()),
 )

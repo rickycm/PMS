@@ -261,7 +261,7 @@
                                                         <th>CSS grade</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody id="listbody">
                                                     <tr class="odd gradeX">
                                                         <td>Trident</td>
                                                         <td>Internet
@@ -613,16 +613,27 @@
     {% block footerjs %}
         {{ block.super }}
 
-        <script src="/static/js/datatables/jquery.dataTables.min.js"></script>
-        <script src="/static/js/datatables/extras/ZeroClipboard.js"></script>
-        <script src="/static/js/datatables/extras/TableTools.min.js"></script>
-        <script src="/static/js/datatables/DT_bootstrap.js"></script>
-        <script src="/static/js/responsive-tables/responsive-tables.js"></script>
 
         <script type="text/javascript">
+
             $(document).ready(function() {
                 // try your js
-                
+/*
+                $.ajax({
+                    url: "/property",
+                    type: "GET",
+                    contentType: "application/json",
+                    success: function (data) {
+                        console.log(data);
+                        //var pl=JSON.parse(data);
+                        for (var p in data){
+                            alert(p);
+                            var phtml='<tr class="gradeC"><td>'+p.p_name+'</td><td>'+p.p_type+'</td><td>'+p.p_address+'</td><td>'+p.p_owner+'</td><td>'+p.p_manager+'</td></tr>';
+                            $('#listbody').append(phtml);
+                        }
+                        }
+                });
+*/
                 // uniform
                 $('[data-form=uniform]').uniform();
                 
@@ -659,8 +670,15 @@
                         "sSwfPath": "js/datatables/swf/copy_csv_xls_pdf.swf"
                     }
                 });
+
             });
       
         </script>
+
+        <script src="/static/js/datatables/jquery.dataTables.min.js"></script>
+        <script src="/static/js/datatables/extras/ZeroClipboard.js"></script>
+        <script src="/static/js/datatables/extras/TableTools.min.js"></script>
+        <script src="/static/js/datatables/DT_bootstrap.js"></script>
+        <script src="/static/js/responsive-tables/responsive-tables.js"></script>
     {% endblock %}
     </body>

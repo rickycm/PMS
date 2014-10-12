@@ -55,13 +55,75 @@ def property_list(rq):
     user = rq.user
     if user.is_superuser == 1:
         properties = Property.objects.all()
-        print('user' + user + 'len(properties) = ' + str(len(properties)))
+        print('user' + user.username + 'len(properties) = ' + str(len(properties)))
 
         return render_to_response("property_table.html",
                                   {'title': 'Property List', 'user': user, 'properties': properties}, context_instance=RequestContext(rq))
     else:
         properties = Property.objects.filter(p_manager=user)
-        print('user' + user + 'len(properties) = ' + str(len(properties)))
+        print('user' + user.username + 'len(properties) = ' + str(len(properties)))
 
         return render_to_response("property_table.html",
                                   {'title': 'Property List', 'user': user, 'properties': properties}, context_instance=RequestContext(rq))
+
+'''
+from rest_framework.views import APIView
+from rest_framework.response import Response
+#from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
+from serializers import PropertySerializer
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+
+
+class PropertyList(APIView):
+
+    # 在setting文件中间配置的话，就没有必要在这个地方强制指定了。
+    #renderer_classes = [JSONRenderer, BrowsableAPIRenderer]
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        # 这里每个医生访问的应该只是他自己的病人
+        # 尚未考虑如何解决分页问题。
+        #patients = patient.objects.filter(doctor_id=request.user.id, p_state__lt=10)
+        properties = Property.objects.all();
+        serializer = PropertySerializer(properties, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        # 不出意外的话，医生的ID信息不会包括在提交数据中，此处需要加上。
+        serializer = PropertySerializer(data=request.DATA)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PatientDetail(APIView):
+
+    permission_classes = [IsOwner]
+
+    def __get_object(self, pk):
+        try:
+            return patient.objects.get(pk=pk)
+        except patient.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        person = self.__get_object(pk)
+        serializer = PatientSerializer(person)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        person = self.__get_object(pk)
+        serializer = PatientSerializer(person, data=request.DATA)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        person = self.__get_object(pk)
+        person.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+'''
