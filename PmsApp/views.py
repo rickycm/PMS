@@ -55,13 +55,13 @@ def property_list(rq):
     user = rq.user
     if user.is_superuser == 1:
         properties = Property.objects.all()
-        print('user' + user + 'len(properties) = ' + str(len(properties)))
+        print('user' + user.username + 'len(properties) = ' + str(len(properties)))
 
         return render_to_response("property_table.html",
                                   {'title': 'Property List', 'user': user, 'properties': properties}, context_instance=RequestContext(rq))
     else:
         properties = Property.objects.filter(p_manager=user)
-        print('user' + user + 'len(properties) = ' + str(len(properties)))
+        print('user' + user.username + 'len(properties) = ' + str(len(properties)))
 
         return render_to_response("property_table.html",
                                   {'title': 'Property List', 'user': user, 'properties': properties}, context_instance=RequestContext(rq))

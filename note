@@ -5,3 +5,48 @@
 from django.contrib.auth.models import User
 u = User.objects.get(pk=1) # Get the first user in the system
 user_address = u.get_profile().home_address
+
+
+命令：
+python manage.py init 初始化数据库
+
+python manage.py sqlall [appname] 查看app的CREATE TABLE的语句，包括原始数据，创建索引等.
+
+python manage.py sqlreset [appname] 修改models，不保留以前数据，进行重置数据库，更新表。
+
+python manage.py validate 用来排错
+
+python manage.py syncdb 用来建表
+
+python manage.py sql databasename 用来查看已创建数据库表结构
+
+
+
+
+
+
+=======Form 相关
+forms 中使用datetimepicker.js
+http://www.it165.net/pro/html/201303/5210.html
+**********
+django中如何在form中限制ForeignKey的显示数据
+http://alexliyu.blog.163.com/blog/static/162754496201271252931845/
+***********
+字段类型的对应，django model的字段类型对应到form的字段类型，这里列举一下几个重要的：
+
+Model field	Form field
+BooleanField	BooleanField
+CharField 	 CharField with max_length
+ DateField	 DateField
+ DateTimeField	 DateTimeField
+ FileField	 FileField
+ ForeignKey	 ModelChoiceField
+ IntegerField	 IntegerField
+ ManyToManyField	 ModelMultipleChoiceField
+ TextField	 CharField with widget=forms.Textarea
+ForeignKey is represented by django.forms.ModelChoiceField, which is a ChoiceField whose choices are a model QuerySet.
+ManyToManyField is represented by django.forms.ModelMultipleChoiceField, which is a MultipleChoiceField whose choices are a model QuerySet.
+
+**********
+表单下拉列表
+https://djangosnippets.org/snippets/26/
