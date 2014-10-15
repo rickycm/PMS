@@ -92,6 +92,15 @@ class Property(models.Model):
         return self.p_name
 
 
+class ActionHistory(models.Model):
+    h_property = models.ForeignKey(Property, verbose_name=u'Property')
+    h_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Date')
+    h_action = models.IntegerField(choices=ACTION, default=1, blank=True, null=True, verbose_name=u'Action')
+    h_operator = models.ForeignKey(User, unique=True, verbose_name=u'Operator')
+    h_tenant = models.ForeignKey(TenantInfo, blank=True, null=True)
+    h_payer_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Payer name')
+
+
 class RentalBill(models.Model):
     rb_property = models.ForeignKey(Property, verbose_name=u'Property')
     rb_period_start = models.DateField(blank=True, null=True, verbose_name=u'Start Date')
@@ -124,12 +133,3 @@ class Deposit(models.Model):
     d_payer_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Payer name')
     d_actionHistory = models.ForeignKey(ActionHistory, blank=True, null=True)
     d_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Add Date')
-
-
-class ActionHistory(models.Model):
-    h_property = models.ForeignKey(Property, verbose_name=u'Property')
-    h_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Date')
-    h_action = models.IntegerField(choices=ACTION, default=1, blank=True, null=True, verbose_name=u'Action')
-    h_operator = models.ForeignKey(User, unique=True, verbose_name=u'Operator')
-    h_tenant = models.ForeignKey(TenantInfo, blank=True, null=True)
-    h_payer_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Payer name')

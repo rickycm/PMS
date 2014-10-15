@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+    {% block pagehead %}
+        {{ block.super }}
+
+        <link href="/static/css/DT_bootstrap.css" rel="stylesheet" />
+        <link href="/static/css/responsive-tables.css" rel="stylesheet" />
+    {% endblock %}
+
+    <body>
+    {% block content %}
+        {% include "header_full.html" %}
+
+        <!-- section content -->
+        <section class="section">
+            <div class="row-fluid">
+                {% include "side_left.html" %}
+
+                <!-- span content -->
+                <div class="span9">
+                    <!-- content -->
+                    <div class="content">
+                        <!-- content-header -->
+                        <div class="content-header">
+                            <ul class="content-header-action pull-right">
+                                <li>
+                                    <a href="#">
+                                        <div class="badge-circle grd-green color-white"><i class="icofont-plus-sign"></i></div>
+                                        <div class="action-text color-green">8765 <span class="helper-font-small color-silver-dark">Visits</span></div>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="#">
+                                        <div class="badge-circle grd-teal color-white"><i class="icofont-user-md"></i></div>
+                                        <div class="action-text color-teal">1437 <span class="helper-font-small color-silver-dark">Users</span></div>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="#">
+                                        <div class="badge-circle grd-orange color-white">$</div>
+                                        <div class="action-text color-orange">4367 <span class="helper-font-small color-silver-dark">Orders</span></div>
+                                    </a>
+                                </li>
+                            </ul>
+                            <h2><i class="icofont-table"></i> Tables</h2>
+                        </div><!-- /content-header -->
+
+                        <!-- content-breadcrumb -->
+                        <div class="content-breadcrumb">
+                            <!--breadcrumb-nav-->
+                            <ul class="breadcrumb-nav pull-right">
+                                <li class="divider"></li>
+                                <li class="btn-group">
+                                    <a href="#" class="btn btn-small btn-link">
+                                        <i class="icofont-money"></i> Orders <span class="color-red">(+12)</span>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li class="btn-group">
+                                    <a href="#" class="btn btn-small btn-link">
+                                        <i class="icofont-user"></i> Users <span class="color-red">(+34)</span>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li class="btn-group">
+                                    <a href="#" class="btn btn-small btn-link dropdown-toggle" data-toggle="dropdown">
+                                        <i class="icofont-tasks"></i> Tasks
+                                        <i class="icofont-caret-down"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">Some Action</a></li>
+                                        <li><a href="#">Other Action</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="#">Something Else</a></li>
+                                    </ul>
+                                </li>
+                            </ul><!--/breadcrumb-nav-->
+
+                            <!--breadcrumb-->
+                            <ul class="breadcrumb">
+                                <li><a href="index.html"><i class="icofont-home"></i> Dashboard</a> <span class="divider">&rsaquo;</span></li>
+                                <li><a href="tables.html">Tables</a> <span class="divider">&rsaquo;</span></li>
+                                <li class="active">Data elements</li>
+                            </ul><!--/breadcrumb-->
+                        </div><!-- /content-breadcrumb -->
+
+                        <!-- content-body -->
+                        <div class="content-body">
+                            <!-- tables -->
+                            <!--datatables-->
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <div class="box corner-all">
+                                        <div class="box-header grd-white corner-top">
+                                            <div class="header-control">
+                                                <a data-box="collapse"><i class="icofont-caret-up"></i></a>
+                                                <a data-box="close" data-hide="bounceOutRight">&times;</a>
+                                            </div>
+                                            <span>Datatables</span>
+                                        </div>
+                                        <div class="box-body">
+
+                                            <h1>Contact us</h1>
+                                                {% if form.errors %}
+                                                    <p style="color: red;">
+                                                        {# pulralize 是filter，用来判断是否为添加's'来表示单词的复数形式#}
+                                                        Please correct the error{{ form.errors|pluralize }} below.
+                                                    </p>
+                                                {% endif %}
+
+                                                <form action="" method="post">
+                                                    <table>
+                                                        {# 可以使用as_table，as_ul, as_p来改变格式 #}
+                                                        {{ form.as_table }}
+                                                    </table>
+                                                    <input type="submit" value="Submit">
+                                                </form>
+
+                                        </div><!-- /box-body -->
+                                    </div><!-- /box -->
+                                </div><!-- /span -->
+                            </div><!--/datatables-->
+
+
+                            <!--/tables-->
+                        </div><!--/content-body -->
+                    </div><!-- /content -->
+                </div><!-- /span content -->
+                
+
+            </div>
+        </section>
+    {% endblock %}
+
+    {% block footer %}
+    {% endblock %}
+
+    {% block footerjs %}
+        {{ block.super }}
+
+
+        <script type="text/javascript">
+
+            $(document).ready(function() {
+                // try your js
+/*
+                $.ajax({
+                    url: "/property",
+                    type: "GET",
+                    contentType: "application/json",
+                    success: function (data) {
+                        console.log(data);
+                        //var pl=JSON.parse(data);
+                        for (var p in data){
+                            alert(p);
+                            var phtml='<tr class="gradeC"><td>'+p.p_name+'</td><td>'+p.p_type+'</td><td>'+p.p_address+'</td><td>'+p.p_owner+'</td><td>'+p.p_manager+'</td></tr>';
+                            $('#listbody').append(phtml);
+                        }
+                        }
+                });
+*/
+                // uniform
+                $('[data-form=uniform]').uniform();
+                
+                // datatables
+                $('#datatables').dataTable( {
+                    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+                    "sPaginationType": "bootstrap",
+                    "oLanguage": {
+                            "sLengthMenu": "_MENU_ records per page"
+                    }
+                });
+                
+                // datatables table tools
+                $('#datatablestools').dataTable({
+                    "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+                    "oTableTools": {
+                        "aButtons": [
+                            "copy",
+                            "print",
+                            {
+                                "sExtends":    "collection",
+                                "sButtonText": 'Save <span class="caret" />',
+                                "aButtons":    [ 
+                                    "xls", 
+                                    "csv",
+                                    {
+                                        "sExtends": "pdf",
+                                        "sPdfOrientation": "landscape",
+                                        "sPdfMessage": "Your custom message would go here."
+                                    }
+                                ]
+                            }
+                        ],
+                        "sSwfPath": "js/datatables/swf/copy_csv_xls_pdf.swf"
+                    }
+                });
+
+            });
+      
+        </script>
+
+        <script src="/static/js/datatables/jquery.dataTables.min.js"></script>
+        <script src="/static/js/datatables/extras/ZeroClipboard.js"></script>
+        <script src="/static/js/datatables/extras/TableTools.min.js"></script>
+        <script src="/static/js/datatables/DT_bootstrap.js"></script>
+        <script src="/static/js/responsive-tables/responsive-tables.js"></script>
+    {% endblock %}
+    </body>

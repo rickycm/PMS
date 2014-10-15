@@ -66,6 +66,59 @@ def property_list(rq):
         return render_to_response("property_table.html",
                                   {'title': 'Property List', 'user': user, 'properties': properties}, context_instance=RequestContext(rq))
 
+
+@login_required
+def checkinForm(rq):
+    user = rq.user
+
+    if rq.method == 'GET':
+        propid = rq.GET.get('propertyid')
+        if propid != None:
+            try:
+                this_property = Property.objects.get(pk=propid)
+            except Property.DoesNotExist:
+                title = u'Error'
+                errorMessage = u'Property Does not Exist!'
+                return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title},
+                                      context_instance=RequestContext(rq))
+            form = forms.CheckinForm(instance=this_property)
+        else:
+            form = forms.CheckinForm(user=user.id)
+
+        return render_to_response('checkinForm.html', {'title': u'Check-in', 'form': form},
+                              context_instance=RequestContext(rq))
+    else:
+        form = forms.EventForm(rq.POST)
+        s = datetime.strptime(form.data['eventdate'] + ' ' + form.data['eventtime'], "%Y-%m-%d %H:%M")
+        if form.is_valid():
+            hostname = form.data['event_hostname']
+            if hostname!=user.first_name:
+                user.first_name = hostname
+                user.save()
+
+            e = Property.objects.create(
+                event_title = form.data['event_title'],
+                event_detail = form.data['event_detail'],
+                event_date = s,
+                event_limit = form.data['event_limit'],
+                updated_by = user,
+                event_type = form.data['event_type'],
+                event_hostname = hostname,
+                event_status = 0,
+            )
+            e.save()
+
+            return HttpResponseRedirect('/showevent/?eventid='+str(e.id))
+        else:
+            logger.debug('Setting form is invalid.')
+            event_type = form.data['event_type']
+            if event_type == '2':
+                return render_to_response('addDinnerParty.html', {'title': u'新建活动', 'form': form}, context_instance=RequestContext(rq))
+            else:
+                return render_to_response('addEvent.html', {'title': u'新建活动', 'form': form}, context_instance=RequestContext(rq))
+
+
+
 '''
 from rest_framework.views import APIView
 from rest_framework.response import Response

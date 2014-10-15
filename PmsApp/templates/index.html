@@ -11,42 +11,7 @@
         <!-- section content -->
         <section class="section">
             <div class="row-fluid">
-                <!-- span side-left -->
-                <div class="span1">
-                    <!--side bar-->
-                    <aside class="side-left">
-                        <ul class="sidebar">
-                            <li class="active first"> <!--always define class .first for first-child of li element sidebar left-->
-                                <a href="index.html" title="dashboard">
-                                    <div class="helper-font-24">
-                                        <i class="icofont-dashboard"></i>
-                                    </div>
-                                    <span class="sidebar-text">Dashboard</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="Property_table.html" title="Property">
-                                    <div class="helper-font-24">
-                                        <i class="icofont-table"></i>
-                                    </div>
-                                    <span class="sidebar-text">Property</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="Bills.html" title="Bills">
-                                    <div class="helper-font-24">
-                                        <i class="icofont-columns"></i>
-                                    </div>
-                                    <span class="sidebar-text">Bills</span>
-                                </a>
-                            </li>
-
-                                </ul>
-                            </li>
-                        </ul>
-                    </aside><!--/side bar -->
-                </div><!-- span side-left -->
+                {% include "side_left.html" %}
                 
                 <!-- span content -->
                 <div class="span9">

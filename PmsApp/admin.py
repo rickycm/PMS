@@ -42,10 +42,10 @@ class RentalBillAdmin(admin.ModelAdmin):
 admin.site.register(RentalBill, RentalBillAdmin)
 
 
-class MaintanceBillAdmin(admin.ModelAdmin):
+class MaintenanceBillAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(MaintanceBill, MaintanceBillAdmin)
+admin.site.register(MaintenanceBill, MaintenanceBillAdmin)
 
 
 # Re-register UserAdmin
