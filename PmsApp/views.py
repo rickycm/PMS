@@ -88,7 +88,7 @@ def checkinForm(rq):
         return render_to_response('checkinForm.html', {'title': u'Check-in', 'form': form},
                               context_instance=RequestContext(rq))
     else:
-        form = forms.EventForm(rq.POST)
+        form = forms.CheckinForm(rq.POST)
         s = datetime.strptime(form.data['eventdate'] + ' ' + form.data['eventtime'], "%Y-%m-%d %H:%M")
         if form.is_valid():
             hostname = form.data['event_hostname']
@@ -180,3 +180,7 @@ class PatientDetail(APIView):
         person.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 '''
+
+
+def datetime(rq):
+    return render_to_response("datetime.html")

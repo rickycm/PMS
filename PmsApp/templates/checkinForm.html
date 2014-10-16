@@ -5,6 +5,11 @@
 
         <link href="/static/css/DT_bootstrap.css" rel="stylesheet" />
         <link href="/static/css/responsive-tables.css" rel="stylesheet" />
+
+        <link href="/static/css/datetimepicker.css" rel="stylesheet" media="screen">
+        <link href="/static/css/datepicker.css" rel="stylesheet" media="screen">
+
+        {{ form.media }}
     {% endblock %}
 
     <body>
@@ -98,25 +103,27 @@
                                                 <a data-box="collapse"><i class="icofont-caret-up"></i></a>
                                                 <a data-box="close" data-hide="bounceOutRight">&times;</a>
                                             </div>
-                                            <span>Datatables</span>
+                                            <span id="box-name">Check-in</span>
                                         </div>
                                         <div class="box-body">
 
-                                            <h1>Contact us</h1>
-                                                {% if form.errors %}
-                                                    <p style="color: red;">
-                                                        {# pulralize 是filter，用来判断是否为添加's'来表示单词的复数形式#}
-                                                        Please correct the error{{ form.errors|pluralize }} below.
-                                                    </p>
-                                                {% endif %}
+                                            {% if form.errors %}
+                                                <p style="color: red;">
+                                                    {# pulralize 是filter，用来判断是否为添加's'来表示单词的复数形式#}
+                                                    Please correct the error{{ form.errors|pluralize }} below.
+                                                </p>
+                                            {% endif %}
 
-                                                <form action="" method="post">
-                                                    <table>
-                                                        {# 可以使用as_table，as_ul, as_p来改变格式 #}
-                                                        {{ form.as_table }}
-                                                    </table>
-                                                    <input type="submit" value="Submit">
-                                                </form>
+                                            <form action="" method="post">
+                                                <table>
+                                                    {# 可以使用as_table，as_ul, as_p来改变格式 #}
+                                                    {{ form.as_table }}
+                                                </table>
+                                                {% csrf_token %}
+                                                <div class="form-group">
+                                                    <input type="submit" value="Submit" class="btn btn-primary" />
+                                                </div>
+                                            </form>
 
                                         </div><!-- /box-body -->
                                     </div><!-- /box -->
@@ -139,12 +146,13 @@
 
     {% block footerjs %}
         {{ block.super }}
-
+        <script type="text/javascript" src="/static/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
 
         <script type="text/javascript">
 
             $(document).ready(function() {
                 // try your js
+
 /*
                 $.ajax({
                     url: "/property",
@@ -207,5 +215,6 @@
         <script src="/static/js/datatables/extras/TableTools.min.js"></script>
         <script src="/static/js/datatables/DT_bootstrap.js"></script>
         <script src="/static/js/responsive-tables/responsive-tables.js"></script>
+
     {% endblock %}
     </body>

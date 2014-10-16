@@ -28,22 +28,6 @@
         <!--[if lt IE 9]>
           <script src="/static/js/html5.js"></script>
         <![endif]-->
-    {% endblock %}
-    </head>
-
-    <body>
-
-        {% block content %}
-        {% endblock %}
-
-        <!-- section footer -->
-        <footer>
-        {% block footer %}
-            <a rel="to-top" href="#top"><i class="icofont-circle-arrow-up"></i></a>
-        {% endblock%}
-        </footer>
-
-        {% block footerjs %}
 
             <!-- javascript ================================================== -->
             <script src="/static/js/jquery.js"></script>
@@ -63,6 +47,24 @@
             <!-- required stilearn template js, for full feature-->
             <script src="/static/js/holder.js"></script>
             <!--<script src="/static/js/stilearn-base.js"></script>-->
+
+    {% endblock %}
+    </head>
+
+    <body>
+
+        {% block content %}
+        {% endblock %}
+
+        <!-- section footer -->
+        <footer>
+        {% block footer %}
+            <a rel="to-top" href="#top"><i class="icofont-circle-arrow-up"></i></a>
+        {% endblock%}
+        </footer>
+
+        {% block footerjs %}
+
 
 
 
