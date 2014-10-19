@@ -8,3 +8,4 @@ RENTAL_TYPE = [(1, u'Monthly'), (2, u'Quarterly'), (3, u'Yearly'), (4, u'Daily')
 USER_TYPE = [(1, u'Manager'), (2, u'Owner'), (3, u'Tenant')]
 ACTION = [(1, u'Check-in'), (2, u'Check-out'), (3, u'Pay Rental Bill'), (4, u'Rise Maintenance Bill'),
           (5, u'Pay Maintenance Bill')]
+GENDER_CHOICE = [(u'M', u'Male'), (u'F', u'Female')]

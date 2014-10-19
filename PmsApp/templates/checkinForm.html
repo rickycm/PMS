@@ -9,6 +9,7 @@
         <link href="/static/css/datetimepicker.css" rel="stylesheet" media="screen">
         <link href="/static/css/datepicker.css" rel="stylesheet" media="screen">
 
+
         {{ form.media }}
     {% endblock %}
 
@@ -22,7 +23,7 @@
                 {% include "side_left.html" %}
 
                 <!-- span content -->
-                <div class="span9">
+                <div class="span11">
                     <!-- content -->
                     <div class="content">
                         <!-- content-header -->
@@ -86,8 +87,8 @@
                             <!--breadcrumb-->
                             <ul class="breadcrumb">
                                 <li><a href="index.html"><i class="icofont-home"></i> Dashboard</a> <span class="divider">&rsaquo;</span></li>
-                                <li><a href="tables.html">Tables</a> <span class="divider">&rsaquo;</span></li>
-                                <li class="active">Data elements</li>
+
+                                <li class="active">Check-in</li>
                             </ul><!--/breadcrumb-->
                         </div><!-- /content-breadcrumb -->
 
@@ -99,10 +100,6 @@
                                 <div class="span12">
                                     <div class="box corner-all">
                                         <div class="box-header grd-white corner-top">
-                                            <div class="header-control">
-                                                <a data-box="collapse"><i class="icofont-caret-up"></i></a>
-                                                <a data-box="close" data-hide="bounceOutRight">&times;</a>
-                                            </div>
                                             <span id="box-name">Check-in</span>
                                         </div>
                                         <div class="box-body">
@@ -150,25 +147,34 @@
 
         <script type="text/javascript">
 
+            function getPrice(property_id){
+                $.ajax({
+                    type: "GET",
+                    url: "/propertyPrice_list?property_id="+property_id,
+                    dataType:'json',
+                    success: function(data,textStatus){
+                        var priceSelect = document.getElementById("id_price");
+                        for ( var i=priceSelect.options.length-1; i>-1; i--){
+                            priceSelect[i] = null;
+                        }
+                        if(data.length > 0) {
+                            $("#id_price").show();
+                            for(i=0;i<data.length;i++){
+                                priceSelect.options[i] = new Option();
+                                priceSelect.options[i].text = data[i].text;
+                                priceSelect.options[i].value = data[i].value;
+                            }
+                        }else{
+                           // $("#id_price").hide();
+                        }
+
+                    }
+                })
+            };
+
             $(document).ready(function() {
                 // try your js
 
-/*
-                $.ajax({
-                    url: "/property",
-                    type: "GET",
-                    contentType: "application/json",
-                    success: function (data) {
-                        console.log(data);
-                        //var pl=JSON.parse(data);
-                        for (var p in data){
-                            alert(p);
-                            var phtml='<tr class="gradeC"><td>'+p.p_name+'</td><td>'+p.p_type+'</td><td>'+p.p_address+'</td><td>'+p.p_owner+'</td><td>'+p.p_manager+'</td></tr>';
-                            $('#listbody').append(phtml);
-                        }
-                        }
-                });
-*/
                 // uniform
                 $('[data-form=uniform]').uniform();
                 

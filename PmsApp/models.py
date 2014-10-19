@@ -46,6 +46,10 @@ class TenantInfo(models.Model):
     t_address = models.CharField(max_length=20, blank=True, null=True)
     t_email = models.EmailField(max_length=1000, verbose_name=u'E-mail', blank=True, null=True)
     t_date = models.DateTimeField(blank=True, null=True, verbose_name=u'Add Date')
+    t_manager = models.ForeignKey(User, related_name=u'manager', blank=True, null=True)
+
+    def __unicode__(self):
+        return self.t_name
 
 '''
 class OwnerInfo(models.Model):
@@ -72,16 +76,16 @@ class Property(models.Model):
     p_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Property Name')
     p_type = models.IntegerField(choices=P_TYPE, default=1, blank=True, null=True)
     p_address = models.CharField(max_length=20, blank=True, null=True)
-    p_owner = models.ForeignKey(User, related_name='owner')
-    p_manager = models.ForeignKey(User, related_name='manager', blank=True, null=True)
+    p_owner = models.ForeignKey(User, related_name=u'owner')
+    p_manager = models.ForeignKey(User, related_name=u'Property manager', blank=True, null=True)
     p_tenant = models.ForeignKey(TenantInfo, blank=True, null=True)
     p_area = models.CharField(max_length=200, blank=True, null=True)
     p_buildtime = models.DateField(blank=True, null=True)
     p_rent_circle = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True)
-    p_rent_price = models.IntegerField(blank=True, null=True)
     p_add_date = models.DateField(blank=True, null=True, auto_now_add=True, verbose_name=u'Add Date')
     p_status = models.IntegerField(choices=P_STATUS, default=1, blank=True, null=True)
     p_checkinTime = models.DateTimeField(blank=True, null=True)
+    p_checkoutTime = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         verbose_name = u'Property'
@@ -92,6 +96,18 @@ class Property(models.Model):
         return self.p_name
 
 
+class PropertyPrice(models.Model):
+    pp_property = models.ForeignKey(Property, verbose_name=u'Property')
+    pp_price_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Price Name')
+    pp_rent_circle = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True)
+    pp_price = models.IntegerField(blank=True, null=True)
+    pp_currency = models.CharField(max_length=10, blank=True, null=True, verbose_name=u'Currency')
+    pp_add_date = models.DateField(blank=True, null=True, auto_now_add=True, verbose_name=u'Add Date')
+
+    def __unicode__(self):
+        return self.pp_price_name
+
+
 class ActionHistory(models.Model):
     h_property = models.ForeignKey(Property, verbose_name=u'Property')
     h_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Date')
@@ -99,6 +115,20 @@ class ActionHistory(models.Model):
     h_operator = models.ForeignKey(User, unique=True, verbose_name=u'Operator')
     h_tenant = models.ForeignKey(TenantInfo, blank=True, null=True)
     h_payer_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Payer name')
+    h_checkinTime = models.DateTimeField(blank=True, null=True, verbose_name=u'Check-in Time')
+    h_prox_checkoutTime = models.DateTimeField(blank=True, null=True, verbose_name=u'Prox Check-out Time')
+    h_checkoutTime = models.DateTimeField(blank=True, null=True, verbose_name=u'Check-out Time')
+
+
+class RentHistory(models.Model):
+    rh_property = models.ForeignKey(Property, verbose_name=u'Property')
+    th_tenant = models.ForeignKey(TenantInfo, blank=True, null=True, verbose_name=u'Tenant')
+    rh_checkin_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Check-in Date')
+    rh_checkout_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Check-out Date')
+    rh_rent_circle = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True, verbose_name=u'Rent Circle')
+    rh_price = models.IntegerField(blank=True, null=True, verbose_name=u'Price')
+    rh_total_amount = models.IntegerField(blank=True, null=True, verbose_name=u'Total Amount')
+    rh_operator = models.ForeignKey(User, unique=True, verbose_name=u'Operator')
 
 
 class RentalBill(models.Model):

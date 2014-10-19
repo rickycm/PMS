@@ -1,5 +1,5 @@
 #coding=utf-8
-import logging
+import logging, json, time
 from datetime import datetime
 
 from django.utils import timezone
@@ -81,41 +81,42 @@ def checkinForm(rq):
                 errorMessage = u'Property Does not Exist!'
                 return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title},
                                       context_instance=RequestContext(rq))
-            form = forms.CheckinForm(instance=this_property)
+            form = forms.CheckinForm(instance=this_property, user=user.id)
         else:
             form = forms.CheckinForm(user=user.id)
 
         return render_to_response('checkinForm.html', {'title': u'Check-in', 'form': form},
                               context_instance=RequestContext(rq))
     else:
-        form = forms.CheckinForm(rq.POST)
-        s = datetime.strptime(form.data['eventdate'] + ' ' + form.data['eventtime'], "%Y-%m-%d %H:%M")
+        form = forms.CheckinForm(rq.POST, user=user.id)
+        print(form.data['checkinTime'])
+        checkintime = time.strptime(form.data['checkinTime'], "%Y-%m-%d %H:%M")
+        #checkouttime = datetime.strptime(form.data['prx_checkoutTime'], "%Y-%m-%d %H:%M")
+        print(time.strftime("%Y-%m-%d-%H-%M", checkintime))
         if form.is_valid():
-            hostname = form.data['event_hostname']
-            if hostname!=user.first_name:
-                user.first_name = hostname
-                user.save()
-
-            e = Property.objects.create(
-                event_title = form.data['event_title'],
-                event_detail = form.data['event_detail'],
-                event_date = s,
-                event_limit = form.data['event_limit'],
-                updated_by = user,
-                event_type = form.data['event_type'],
-                event_hostname = hostname,
-                event_status = 0,
+            prop = Property.objects.get(pk=form.data['properties'])
+            print(prop)
+            tenant = TenantInfo.objects.get(pk=form.data['tenant'])
+            actionhis = ActionHistory.objects.create(
+                h_property = prop,
+                h_action = form.data['action'],
+                h_operator = user,
+                h_tenant = tenant,
+                h_checkinTime = form.data['checkinTime'],
+                h_prox_checkoutTime = form.data['prx_checkoutTime'],
             )
-            e.save()
-
-            return HttpResponseRedirect('/showevent/?eventid='+str(e.id))
+            actionhis.save()
+            print(actionhis)
+            prop.p_checkinTime = form.data['checkinTime']
+            prop.p_status = 2
+            prop.p_tenant = tenant
+            prop.p_rent_circle = form.data['rent_circle']
+            prop.save()
+            print(prop)
+            return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))
         else:
             logger.debug('Setting form is invalid.')
-            event_type = form.data['event_type']
-            if event_type == '2':
-                return render_to_response('addDinnerParty.html', {'title': u'新建活动', 'form': form}, context_instance=RequestContext(rq))
-            else:
-                return render_to_response('addEvent.html', {'title': u'新建活动', 'form': form}, context_instance=RequestContext(rq))
+            return render_to_response('checkinForm.html', {'title': u'Check-in', 'form': form}, context_instance=RequestContext(rq))
 
 
 
@@ -184,3 +185,15 @@ class PatientDetail(APIView):
 
 def datetime(rq):
     return render_to_response("datetime.html")
+
+
+def propertyPrice_list(request):
+    price_list = []
+    property_id = request.GET['property_id']
+    prices = PropertyPrice.objects.filter(pp_property = property_id)
+    for price in prices:
+        c = {}
+        c['text'] = str(price.pp_currency)+': '+str(price.pp_price)+' - '+str(price.pp_price_name)+'('+str(price.get_pp_rent_circle_display())+')'
+        c['value'] = price.id
+        price_list.append(c)
+    return HttpResponse(json.dumps(price_list))

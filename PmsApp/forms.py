@@ -18,12 +18,15 @@ class LoginForm(forms.Form):
 
 class CheckinForm(forms.Form):
 
-    properties = forms.ModelChoiceField(queryset=Property.objects.filter(p_manager='0'), widget=forms.Select(attrs=attrs_dict))
+    properties = forms.ModelChoiceField(queryset=Property.objects.all(), widget=forms.Select(attrs={'class': 'required', 'onChange': 'javascript:alert(this.value);getPrice(this.value);'}))
     action = forms.ChoiceField(choices=ACTION, initial={1: u'Check-in'})
     checkinTime = forms.DateTimeField(required=False, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
                                        "pickSeconds": False, "autoclose": 1, "todayBtn":  1}))
     prx_checkoutTime = forms.DateTimeField(required=False, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
                                        "pickSeconds": False, "autoclose": 1, "todayBtn":  1}))
+    tenant = forms.ModelChoiceField(queryset=TenantInfo.objects.all(), widget=forms.Select(attrs=attrs_dict))
+    rent_circle = forms.ChoiceField(choices=RENTAL_TYPE, initial={1: u'Monthly'})
+    price = forms.ModelChoiceField(queryset=PropertyPrice.objects.all(), widget=forms.Select(attrs={'class': 'required'}))
 
     def __init__(self, *args, **kwargs):
         userid = kwargs.pop('user')
@@ -31,20 +34,21 @@ class CheckinForm(forms.Form):
         super(CheckinForm, self).__init__(*args, **kwargs)
         self.fields['properties'].choices = [('', '----------')] + [(properties.id, properties.p_name)
                             for properties in Property.objects.filter(p_manager=u)]
+        self.fields['tenant'].choices = [('', '----------')] + [(tenantinfo.id, tenantinfo.t_name)
+                            for tenantinfo in TenantInfo.objects.filter(t_manager=u)]
 
-        #self.fields['mydate'].widget = widgets.AdminDateWidget()
-        #self.fields['prx_checkoutTime'].widget = widgets.AdminTimeWidget()
-        #self.fields['checkinTime'].widget = widgets.AdminSplitDateTime()
-'''
-    class Meta:
-        dateTimeOptions = {
-            'format': 'dd/mm/yyyy HH:ii P',
-            'autoclose': True,
-            'showMeridian': True
-        }
-        widgets = {
-            #NOT Use localization and set a default format
-            'checkinTime': DateTimeWidget(options=dateTimeOptions),
-            'prx_checkoutTime': DateTimeWidget(options=dateTimeOptions),
-        }
-'''
+    def clean(self):
+        cleaned_data = super(CheckinForm, self).clean()
+        print(cleaned_data)
+        checkinTime = cleaned_data.get("checkinTime")
+        prx_checkoutTime = cleaned_data.get("prx_checkoutTime")
+        print(cleaned_data.get("properties"))
+        print(cleaned_data.get("tenant"))
+        print(cleaned_data.get("price"))
+
+        if prx_checkoutTime < checkinTime:
+            msg = "Check-out time must be later than Check-in time."
+            print(msg)
+            self.add_error('prx_checkoutTime', msg)
+        else:
+            return cleaned_data

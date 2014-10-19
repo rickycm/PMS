@@ -48,6 +48,11 @@ class MaintenanceBillAdmin(admin.ModelAdmin):
 admin.site.register(MaintenanceBill, MaintenanceBillAdmin)
 
 
+class PropertyPriceAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(PropertyPrice, PropertyPriceAdmin)
+
 # Re-register UserAdmin
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
