@@ -84,8 +84,9 @@ class Property(models.Model):
     p_rent_circle = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True)
     p_add_date = models.DateField(blank=True, null=True, auto_now_add=True, verbose_name=u'Add Date')
     p_status = models.IntegerField(choices=P_STATUS, default=1, blank=True, null=True)
-    p_checkinTime = models.DateTimeField(blank=True, null=True)
-    p_checkoutTime = models.DateTimeField(blank=True, null=True)
+    p_current_price = models.OneToOneField(PropertyPrice, blank=True, null=True)
+    p_last_checkinHis = models.OneToOneField(ActionHistory, blank=True, null=True)
+    p_last_checkoutHis = models.DateTimeField(ActionHistory, blank=True, null=True)
 
     class Meta:
         verbose_name = u'Property'
@@ -112,7 +113,7 @@ class ActionHistory(models.Model):
     h_property = models.ForeignKey(Property, verbose_name=u'Property')
     h_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Date')
     h_action = models.IntegerField(choices=ACTION, default=1, blank=True, null=True, verbose_name=u'Action')
-    h_operator = models.ForeignKey(User, unique=True, verbose_name=u'Operator')
+    h_operator = models.ForeignKey(User, verbose_name=u'Operator')
     h_tenant = models.ForeignKey(TenantInfo, blank=True, null=True)
     h_payer_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Payer name')
     h_checkinTime = models.DateTimeField(blank=True, null=True, verbose_name=u'Check-in Time')
@@ -122,7 +123,7 @@ class ActionHistory(models.Model):
 
 class RentHistory(models.Model):
     rh_property = models.ForeignKey(Property, verbose_name=u'Property')
-    th_tenant = models.ForeignKey(TenantInfo, blank=True, null=True, verbose_name=u'Tenant')
+    rh_tenant = models.ForeignKey(TenantInfo, blank=True, null=True, verbose_name=u'Tenant')
     rh_checkin_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Check-in Date')
     rh_checkout_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Check-out Date')
     rh_rent_circle = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True, verbose_name=u'Rent Circle')

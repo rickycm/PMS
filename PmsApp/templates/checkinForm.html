@@ -86,7 +86,8 @@
 
                             <!--breadcrumb-->
                             <ul class="breadcrumb">
-                                <li><a href="index.html"><i class="icofont-home"></i> Dashboard</a> <span class="divider">&rsaquo;</span></li>
+                                <li><a href="/"><i class="icofont-home"></i> Dashboard</a> <span class="divider">&rsaquo;</span></li>
+                                <li><a href="/property/list/"><i class="icofont-home"></i> Property List</a> <span class="divider">&rsaquo;</span></li>
 
                                 <li class="active">Check-in</li>
                             </ul><!--/breadcrumb-->
@@ -98,6 +99,9 @@
                             <!--datatables-->
                             <div class="row-fluid">
                                 <div class="span12">
+                                    {% if msg %}
+                                    <div class="alert alert-success">{{ msg }}</div>
+                                    {% endif %}
                                     <div class="box corner-all">
                                         <div class="box-header grd-white corner-top">
                                             <span id="box-name">Check-in</span>
