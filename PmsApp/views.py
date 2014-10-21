@@ -68,9 +68,9 @@ def property_list(rq):
 
 
 @login_required
-def checkinForm(rq):
+def checkin(rq):
     user = rq.user
-
+    backurl = rq.get_full_path()
     if rq.method == 'GET':
         propid = rq.GET.get('propertyid')
         if propid != None:
@@ -79,21 +79,22 @@ def checkinForm(rq):
             except Property.DoesNotExist:
                 title = u'Error'
                 errorMessage = u'Property Does not Exist!'
-                return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title},
+                return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
                                       context_instance=RequestContext(rq))
-            form = forms.CheckinForm(propid=propid, user=user.id)
+            form = forms.CheckinForm(propid=propid, user=user.id, initial={'action': '1'})
         else:
-            form = forms.CheckinForm(user=user.id)
+            form = forms.CheckinForm(user=user.id, initial={'action': '1'})
 
         return render_to_response('checkinForm.html', {'title': u'Check-in', 'form': form},
                               context_instance=RequestContext(rq))
     else:
-        form = forms.CheckinForm(rq.POST, user=user.id)
+        form = forms.CheckinForm(rq.POST, user=user.id, initial={'action': '1'})
         if form.is_valid():
             #checkintime = time.strptime(form.data['checkinTime'], "%Y-%m-%d %H:%M")
             #checkouttime = datetime.strptime(form.data['prx_checkoutTime'], "%Y-%m-%d %H:%M")
             prop = Property.objects.get(pk=form.data['properties'])
             tenant = TenantInfo.objects.get(pk=form.data['tenant'])
+            priceid = form.data['price']
             actionhis = ActionHistory.objects.create(
                 h_property = prop,
                 h_action = form.data['action'],
@@ -101,12 +102,13 @@ def checkinForm(rq):
                 h_tenant = tenant,
                 h_checkinTime = form.data['checkinTime'],
                 h_prox_checkoutTime = form.data['prx_checkoutTime'],
+                h_checkinPrice = priceid,
             )
             actionhis.save()
             prop.p_checkinTime = form.data['checkinTime']
+            prop.p_last_checkinHis = actionhis.id
             prop.p_status = 2
             prop.p_tenant = tenant
-            prop.p_rent_circle = form.data['rent_circle']
             prop.save()
             msg = u'Check-In Successful!'
             #return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))
@@ -136,8 +138,7 @@ def propertyPrice_list(request):
 @login_required
 def checkout(rq):
     user = rq.user
-    print(rq.get_full_path())
-    print(rq.path)
+    backurl = rq.get_full_path()
 
     if rq.method == 'GET':
         propid = rq.GET.get('propertyid')
@@ -148,10 +149,9 @@ def checkout(rq):
             except Property.DoesNotExist:
                 title = u'Error'
                 errorMessage = u'Property Does not Exist!'
-                backurl = rq.path
                 return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
                                       context_instance=RequestContext(rq))
-            form = forms.CheckoutForm(initial={'propertyid': propid})
+            form = forms.CheckoutForm(initial={'propertyid': propid, 'action': '2'})
             return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'property': this_property, 'checkinhis': checkinhis},
                               context_instance=RequestContext(rq))
         else:
@@ -162,33 +162,50 @@ def checkout(rq):
                                       context_instance=RequestContext(rq))
     else:
         form = forms.CheckoutForm(rq.POST)
-        todo
-        if form.is_valid():
-            #checkintime = time.strptime(form.data['checkinTime'], "%Y-%m-%d %H:%M")
-            #checkouttime = datetime.strptime(form.data['prx_checkoutTime'], "%Y-%m-%d %H:%M")
-            prop = Property.objects.get(pk=form.data['properties'])
-            tenant = TenantInfo.objects.get(pk=form.data['tenant'])
-            actionhis = ActionHistory.objects.create(
-                h_property = prop,
-                h_action = form.data['action'],
-                h_operator = user,
-                h_tenant = tenant,
-                h_checkinTime = form.data['checkinTime'],
-                h_prox_checkoutTime = form.data['prx_checkoutTime'],
-            )
-            actionhis.save()
-            prop.p_checkinTime = form.data['checkinTime']
-            prop.p_status = 2
-            prop.p_tenant = tenant
-            prop.p_rent_circle = form.data['rent_circle']
-            prop.save()
-            msg = u'Check-In Successful!'
-            #return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))
-            return render_to_response('checkinForm.html', {'title': u'Check-in', 'form': form, 'msg': msg},
-                              context_instance=RequestContext(rq))
+        print(form.data['action'])
+        print(form.data['checkoutTime'])
+        propid = rq.GET.get('propertyid')
+        if propid != None:
+            try:
+                prop = Property.objects.get(pk=propid)
+                checkinhis = ActionHistory.objects.get(pk=prop.p_last_checkinHis)
+            except Property.DoesNotExist:
+                title = u'Error'
+                errorMessage = u'Property Does not Exist!'
+                return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
+                                      context_instance=RequestContext(rq))
+
+            if form.is_valid():
+                actionhis = ActionHistory.objects.create(
+                    h_property = prop,
+                    h_action = 2,
+                    h_operator = user,
+                    h_tenant = checkinhis.h_tenant,
+                    h_checkinTime = checkinhis.h_checkinTime,
+                    h_checkinPrice = checkinhis.h_checkinPrice,
+                    h_prox_checkoutTime = checkinhis.h_prox_checkoutTime,
+                    h_checkoutTime = form.data['checkoutTime'],
+                )
+                actionhis.save()
+                prop.p_checkinTime = ''
+                prop.p_status = 1
+                prop.p_tenant = None
+                prop.save()
+                msg = u'Check-out Successful!'
+                #return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))
+                return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'msg': msg},
+                                  context_instance=RequestContext(rq))
+            else:
+                logger.debug(u'Check-out Failed.')
+                return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'property': prop, 'checkinhis': checkinhis},
+                                  context_instance=RequestContext(rq))
         else:
-            logger.debug('Setting form is invalid.')
-            return render_to_response('checkinForm.html', {'title': u'Check-in', 'form': form}, context_instance=RequestContext(rq))
+            title = u'Error'
+            errorMessage = u'Property Does not Exist!'
+            backurl = rq.path
+            return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
+                                      context_instance=RequestContext(rq))
+
 
 
 '''

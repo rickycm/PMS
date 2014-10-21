@@ -5,6 +5,12 @@
 
         <link href="/static/css/DT_bootstrap.css" rel="stylesheet" />
         <link href="/static/css/responsive-tables.css" rel="stylesheet" />
+
+        <link href="/static/css/datetimepicker.css" rel="stylesheet" media="screen">
+        <link href="/static/css/datepicker.css" rel="stylesheet" media="screen">
+
+
+        {{ form.media }}
     {% endblock %}
 
     <body>
@@ -81,63 +87,28 @@
                             <!--breadcrumb-->
                             <ul class="breadcrumb">
                                 <li><a href="/"><i class="icofont-home"></i> Dashboard</a> <span class="divider">&rsaquo;</span></li>
-                                <li class="active">Property List</li>
+
+                                <li class="active">Error</li>
                             </ul><!--/breadcrumb-->
                         </div><!-- /content-breadcrumb -->
 
-                        <!-- content-body -->
-                        <div class="content-body">
-                            <!-- tables -->
-                            <!--datatables-->
-                            <div class="row-fluid">
-                                <div class="span12">
-                                    <div class="box corner-all">
-                                        <div class="box-header grd-white corner-top">
-                                            <div class="header-control">
-                                                <a data-box="collapse"><i class="icofont-caret-up"></i></a>
-                                                <a data-box="close" data-hide="bounceOutRight">&times;</a>
-                                            </div>
-                                            <span>Property List</span>
-                                        </div>
-                                        <div class="box-body">
-                                            <table id="datatables" class="table table-bordered table-striped responsive">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Property Name</th>
-                                                        <th>Property Type</th>
-                                                        <th>Address</th>
-                                                        <th>Rent Circle</th>
-                                                        <th>Status</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="listbody">
-                                                    {% for property in properties %}
-                                                        <tr class="odd gradeX">
-                                                            <td>{{ property.p_name }}</td>
-                                                            <td>{{ property.get_p_type_display }}</td>
-                                                            <td>{{ property.p_address }}</td>
-                                                            <td class="center">{{ property.get_p_rent_circle_display }}</td>
-                                                            <td class="center">{{ property.get_p_status_display }}</td>
-                                                            <td class="center">
-                                                                {% ifequal property.p_status 1 %}
-                                                                <a class="btn btn-success btn-small" href="/checkinForm/?propertyid={{ property.id }}"><i class="icon-user"></i></a>
-                                                                {% endifequal %}
-                                                                {% ifequal property.p_status 2 %}
-                                                                <a class="btn btn-primary btn-small" href="/checkoutForm/?propertyid={{ property.id }}"><i class="icon-share"></i></a>
-                                                                {% endifequal %}
+                        <!-- section content -->
+                        <section class="section">
+                            <div class="container">
+                                <div class="error-page">
+                                    <h2 class="color-red">Error</h2>
+                                    <p class="error-description muted">
+                                        {% if errorMessage %}
+                                                <p style="color: red;">
+                                                    {{ errorMessage}}
+                                                </p>
+                                        {% endif %}
+                                    </p>
 
-                                                            </td>
-                                                        </tr>
-                                                    {% endfor %}
-
-                                                </tbody>
-                                            </table>
-
-                                        </div><!-- /box-body -->
-                                    </div><!-- /box -->
-                                </div><!-- /span -->
-                            </div><!--/datatables-->
+                                    <a href="{{ backurl }}" class="btn btn-small btn-primary"><i class="icofont-arrow-left"></i> Go Back</a>
+                                </div>
+                            </div>
+                        </section>
 
 
                             <!--/tables-->
@@ -155,28 +126,38 @@
 
     {% block footerjs %}
         {{ block.super }}
-
+        <script type="text/javascript" src="/static/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
 
         <script type="text/javascript">
 
+            function getPrice(property_id){
+                $.ajax({
+                    type: "GET",
+                    url: "/propertyPrice_list?property_id="+property_id,
+                    dataType:'json',
+                    success: function(data,textStatus){
+                        var priceSelect = document.getElementById("id_price");
+                        for ( var i=priceSelect.options.length-1; i>-1; i--){
+                            priceSelect[i] = null;
+                        }
+                        if(data.length > 0) {
+                            $("#id_price").show();
+                            for(i=0;i<data.length;i++){
+                                priceSelect.options[i] = new Option();
+                                priceSelect.options[i].text = data[i].text;
+                                priceSelect.options[i].value = data[i].value;
+                            }
+                        }else{
+                           // $("#id_price").hide();
+                        }
+
+                    }
+                })
+            };
+
             $(document).ready(function() {
                 // try your js
-/*
-                $.ajax({
-                    url: "/property",
-                    type: "GET",
-                    contentType: "application/json",
-                    success: function (data) {
-                        console.log(data);
-                        //var pl=JSON.parse(data);
-                        for (var p in data){
-                            alert(p);
-                            var phtml='<tr class="gradeC"><td>'+p.p_name+'</td><td>'+p.p_type+'</td><td>'+p.p_address+'</td><td>'+p.p_owner+'</td><td>'+p.p_manager+'</td></tr>';
-                            $('#listbody').append(phtml);
-                        }
-                        }
-                });
-*/
+
                 // uniform
                 $('[data-form=uniform]').uniform();
                 
@@ -223,5 +204,6 @@
         <script src="/static/js/datatables/extras/TableTools.min.js"></script>
         <script src="/static/js/datatables/DT_bootstrap.js"></script>
         <script src="/static/js/responsive-tables/responsive-tables.js"></script>
+
     {% endblock %}
     </body>

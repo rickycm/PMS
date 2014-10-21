@@ -19,7 +19,8 @@ class LoginForm(forms.Form):
 class CheckinForm(forms.Form):
 
     properties = forms.ModelChoiceField(queryset=Property.objects.all(), widget=forms.Select(attrs={'class': 'required', 'onChange': 'javascript:getPrice(this.value);'}))
-    action = forms.ChoiceField(choices=ACTION, initial={1: u'Check-in'})
+    #action = forms.ChoiceField(choices=ACTION, widget=forms.Select(attrs={'disabled': 'disabled'}))
+    action = forms.ChoiceField(choices=ACTION)
     checkinTime = forms.DateTimeField(required=True, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
                                        "pickSeconds": False, "autoclose": 1, "todayBtn":  1}))
     prx_checkoutTime = forms.DateTimeField(required=True, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
@@ -61,12 +62,12 @@ class CheckinForm(forms.Form):
 
 class CheckoutForm(forms.Form):
 
-    propertyid = forms.HiddenInput()
+    action = forms.ChoiceField(choices=ACTION)
     checkoutTime = forms.DateTimeField(required=True, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
                                        "pickSeconds": False, "autoclose": 1, "todayBtn":  1}))
 
     def clean(self):
-        cleaned_data = super(CheckinForm, self).clean()
+        cleaned_data = super(CheckoutForm, self).clean()
         return cleaned_data
         '''
         checkoutTime = cleaned_data.get("prx_checkoutTime")
