@@ -20,14 +20,17 @@ class CheckinForm(forms.Form):
 
     properties = forms.ModelChoiceField(queryset=Property.objects.all(), widget=forms.Select(attrs={'class': 'required', 'onChange': 'javascript:getPrice(this.value);'}))
     #action = forms.ChoiceField(choices=ACTION, widget=forms.Select(attrs={'disabled': 'disabled'}))
-    action = forms.ChoiceField(choices=ACTION)
+    action = forms.ChoiceField(choices={(1, u'Check-in')})
     checkinTime = forms.DateTimeField(required=True, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
                                        "pickSeconds": False, "autoclose": 1, "todayBtn":  1}))
     prx_checkoutTime = forms.DateTimeField(required=True, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
                                        "pickSeconds": False, "autoclose": 1, "todayBtn":  1}))
-    tenant = forms.ModelChoiceField(queryset=TenantInfo.objects.all(), widget=forms.Select(attrs=attrs_dict))
+    tenant = forms.ModelChoiceField(queryset=TenantInfo.objects.all(), widget=forms.Select(attrs={'class': 'required', 'onChange': 'javascript:setPayername();'}))
     rent_circle = forms.ChoiceField(choices=RENTAL_TYPE, initial={1: u'Monthly'})
-    price = forms.ModelChoiceField(queryset=PropertyPrice.objects.all(), widget=forms.Select(attrs={'class': 'required'}))
+    price = forms.ModelChoiceField(queryset=PropertyPrice.objects.all(), required=True)
+    deposit_amount = forms.IntegerField(required=True)
+    deposit_currency = forms.CharField(required=True, initial='USD')
+    payer_name = forms.CharField(required=True)
 
     def __init__(self, *args, **kwargs):
         userid = kwargs.pop('user')

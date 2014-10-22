@@ -176,6 +176,11 @@
                 })
             };
 
+            function setPayername(){
+                var checkText=$("#id_tenant").find("option:selected").text();
+                $("#id_payer_name").val(checkText);
+            }
+
             $(document).ready(function() {
                 // try your js
 

@@ -105,6 +105,18 @@ def checkin(rq):
                 h_checkinPrice = priceid,
             )
             actionhis.save()
+
+            deposit = Deposit.objects.create(
+                d_property = prop,
+                d_amount = form.data['deposit_amount'],
+                d_currency = form.data['deposit_currency'],
+                d_tenant = tenant,
+                d_payer_name = form.data['payer_name'],
+                d_actionHistory = actionhis,
+
+            )
+            deposit.save()
+
             prop.p_checkinTime = form.data['checkinTime']
             prop.p_last_checkinHis = actionhis.id
             prop.p_status = 2
