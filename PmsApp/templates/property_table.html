@@ -26,7 +26,7 @@
                                 <li>
                                     <a href="#">
                                         <div class="badge-circle grd-green color-white"><i class="icofont-plus-sign"></i></div>
-                                        <div class="action-text color-green">8765 <span class="helper-font-small color-silver-dark">Visits</span></div>
+                                        <div class="action-text color-green">8765 <span class="helper-font-small color-silver-dark">Properties</span></div>
                                     </a>
                                 </li>
                                 <li class="divider"></li>
@@ -44,7 +44,7 @@
                                     </a>
                                 </li>
                             </ul>
-                            <h2><i class="icofont-table"></i> Tables</h2>
+                            <h2><i class="icofont-table"></i> Property List</h2>
                         </div><!-- /content-header -->
 
                         <!-- content-breadcrumb -->
@@ -54,7 +54,7 @@
                                 <li class="divider"></li>
                                 <li class="btn-group">
                                     <a href="#" class="btn btn-small btn-link">
-                                        <i class="icofont-money"></i> Orders <span class="color-red">(+12)</span>
+                                        <i class="icofont-money"></i> Bills <span class="color-red">(+12)</span>
                                     </a>
                                 </li>
                                 <li class="divider"></li>
@@ -64,18 +64,6 @@
                                     </a>
                                 </li>
                                 <li class="divider"></li>
-                                <li class="btn-group">
-                                    <a href="#" class="btn btn-small btn-link dropdown-toggle" data-toggle="dropdown">
-                                        <i class="icofont-tasks"></i> Tasks
-                                        <i class="icofont-caret-down"></i>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Some Action</a></li>
-                                        <li><a href="#">Other Action</a></li>
-                                        <li class="divider"></li>
-                                        <li><a href="#">Something Else</a></li>
-                                    </ul>
-                                </li>
                             </ul><!--/breadcrumb-nav-->
 
                             <!--breadcrumb-->
@@ -93,10 +81,6 @@
                                 <div class="span12">
                                     <div class="box corner-all">
                                         <div class="box-header grd-white corner-top">
-                                            <div class="header-control">
-                                                <a data-box="collapse"><i class="icofont-caret-up"></i></a>
-                                                <a data-box="close" data-hide="bounceOutRight">&times;</a>
-                                            </div>
                                             <span>Property List</span>
                                         </div>
                                         <div class="box-body">
@@ -114,19 +98,18 @@
                                                 <tbody id="listbody">
                                                     {% for property in properties %}
                                                         <tr class="odd gradeX">
-                                                            <td>{{ property.p_name }}</td>
+                                                            <td><a href="/propertyDetail/?propertyid={{ property.id }}">{{ property.p_name }}</a></td>
                                                             <td>{{ property.get_p_type_display }}</td>
                                                             <td>{{ property.p_address }}</td>
                                                             <td class="center">{{ property.get_p_rent_circle_display }}</td>
                                                             <td class="center">{{ property.get_p_status_display }}</td>
                                                             <td class="center">
                                                                 {% ifequal property.p_status 1 %}
-                                                                <a class="btn btn-success btn-small" href="/checkinForm/?propertyid={{ property.id }}"><i class="icon-user"></i></a>
+                                                                <a class="btn btn-success btn-small" href="/checkinForm/?propertyid={{ property.id }}"><i class="icon-user"></i> Check-in</a>
                                                                 {% endifequal %}
                                                                 {% ifequal property.p_status 2 %}
-                                                                <a class="btn btn-primary btn-small" href="/checkoutForm/?propertyid={{ property.id }}"><i class="icon-share"></i></a>
+                                                                <a class="btn btn-primary btn-small" href="/checkoutForm/?propertyid={{ property.id }}"><i class="icon-share"></i> Check-out</a>
                                                                 {% endifequal %}
-
                                                             </td>
                                                         </tr>
                                                     {% endfor %}

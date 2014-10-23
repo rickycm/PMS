@@ -6,7 +6,7 @@
 
     <body>
     {% block content %}
-        {% include "header_simple.html" %}
+        {% include "header_full.html" %}
 
         <!-- section content -->
         <section class="section">
@@ -26,19 +26,6 @@
                             <ul class="breadcrumb-nav pull-right">
                                 <li class="divider"></li>
                                 <li class="btn-group">
-                                    <a href="#" class="btn btn-small btn-link dropdown-toggle" data-toggle="dropdown">
-                                        <i class="icofont-tasks"></i> Tasks
-                                        <i class="icofont-caret-down"></i>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Some Action</a></li>
-                                        <li><a href="#">Other Action</a></li>
-                                        <li class="divider"></li>
-                                        <li><a href="#">Something Else</a></li>
-                                    </ul>
-                                </li>
-                                <li class="divider"></li>
-                                <li class="btn-group">
                                     <a href="#" class="btn btn-small btn-link">
                                         <i class="icofont-money"></i> Orders <span class="color-red">(+12)</span>
                                     </a>
@@ -53,66 +40,61 @@
                             
                             <!--breadcrumb-->
                             <ul class="breadcrumb">
-                                <li><a href="index.html"><i class="icofont-home"></i> Dashboard</a> <span class="divider">&rsaquo;</span></li>
-                                <li class="active">Data elements</li>
+                                <li><a href="/"><i class="icofont-home"></i> Dashboard</a></li>
                             </ul><!--/breadcrumb-->
                         </div><!-- /content-breadcrumb -->
                         
                         <!-- content-body -->
                         <div class="content-body">
                             <!-- dashboar -->
-                            <!-- shortcut button -->
                             <div class="shortcut-group">
-                                <ul class="a-btn-group">
-                                    <li>
-                                        <a href="#" class="a-btn grd-white" rel="tooltip" title="add new post">
-                                            <span></span>
-                                            <span><i class="icofont-edit color-silver-dark"></i></span>
-                                            <span class="color-silver-dark"><i class="icofont-file color-silver-dark"></i></span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="a-btn grd-white" rel="tooltip" title="upload something">
-                                            <span></span>
-                                            <span><i class="icofont-upload color-silver-dark"></i></span>
-                                            <span class="color-silver-dark"><i class="icofont-upload-alt color-silver-dark"></i></span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="a-btn grd-white" rel="tooltip" title="message">
-                                            <span></span>
-                                            <span><i class="icofont-envelope color-silver-dark"></i></span>
-                                            <span class="color-silver-dark"><i class="icofont-envelope-alt color-teal"></i></span>
-                                            <div class="badge badge-info">9</div> <!--don't use span here!-->
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="a-btn grd-white" rel="tooltip" title="invoice">
-                                            <span></span>
-                                            <span><i class="icofont-barcode color-silver-dark"></i></span>
-                                            <span class="color-silver-dark"><i class="icofont-shopping-cart color-red"></i></span>
-                                            <div class="label label-important">2</div> <!--don't use span here!-->
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="a-btn grd-white" rel="tooltip" title="check statistics">
-                                            <span></span>
-                                            <span><i class="icofont-bar-chart color-silver-dark"></i></span>
-                                            <span class="color-silver-dark"><i class="typicn-lineChart"></i></span>
-                                        </a>
-                                    </li>
-                                    <li class="clearfix"></li>
-                                </ul>
-                            </div><!-- /shortcut button -->
+                                                <div class="shortcut-group">
+                                                <ul class="b-btn-group">
+                                                    <li>
+                                                        <a href="#" class="b-btn grd-teal">
+                                                            <span class="b-btn-slide-text color-white">Go</span>
+                                                            <i class="img icofont-bar-chart color-silver helper-font-48"></i>
+                                                            <span class="b-btn-text helper-font-24 color-white"><small>Properties</small> 30</span>
+                                                            <span class="b-btn-icon-right">
+                                                                <span>
+                                                                    <i class="icofont-arrow-right helper-font-24 color-white"></i>
+                                                                </span>
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" class="b-btn grd-green">
+                                                            <span class="b-btn-slide-text color-white">Go</span>
+                                                            <i class="img icofont-plus-sign color-silver helper-font-48"></i>
+                                                            <span class="b-btn-text helper-font-24 color-white"><small>Bills to Pay</small> 25</span>
+                                                            <span class="b-btn-icon-right">
+                                                                <span>
+                                                                    <i class="icofont-arrow-down helper-font-24 color-white"></i>
+                                                                </span>
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" class="b-btn grd-blue">
+                                                            <span class="b-btn-slide-text color-white">Go</span>
+                                                            <span class="img color-silver helper-font-48">$</span>
+                                                            <span class="b-btn-text helper-font-24 color-white"><small>Monthly Total</small> $2,100</span>
+                                                            <span class="b-btn-icon-right">
+                                                                <span>
+                                                                    <i class="icofont-arrow-down helper-font-24 color-white"></i>
+                                                                </span>
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div><!--/b-btn customize-->
+
                             
                             <div class="divider-content"><span></span></div>
                             
                             <!-- tab stat -->
                             <div class="box-tab corner-all">
                                 <div class="box-header corner-top">
-                                    <div class="header-control pull-right">
-                                        <a data-box="collapse"><i class="icofont-caret-up"></i></a>
-                                    </div>
                                     <ul class="nav nav-tabs" id="tab-stat">
                                         <li class="active"><a data-toggle="tab" href="#system-stat">System Stat</a></li>
                                         <li><a data-toggle="tab" href="#server-stat">Server Stat</a></li>
@@ -122,19 +104,19 @@
                                     <div class="tab-content">
                                         <div class="tab-pane fade in active" id="system-stat">
                                             <div class="row-fluid">
-                                                <div class="span6">
+                                                <div class="span4">
                                                     <div class="dashboard-stat">
                                                         <div id="visitor-stat" class="chart" style="height: 120px;"></div>
                                                         <div class="stat-label grd-green color-white">Visitor</div>
                                                     </div>
                                                 </div>
-                                                <div class="span6">
+                                                <div class="span4">
                                                     <div class="dashboard-stat">
                                                         <div id="order-stat" class="chart" style="height: 120px;"></div>
                                                         <div class="stat-label grd-teal color-white">Users</div>
                                                     </div>
                                                 </div>
-                                                <div class="span6">
+                                                <div class="span4">
                                                     <div class="dashboard-stat">
                                                         <div id="user-stat" class="chart" style="height: 120px;"></div>
                                                         <div class="stat-label grd-red color-white">Orders</div>

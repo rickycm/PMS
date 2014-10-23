@@ -219,6 +219,98 @@ def checkout(rq):
                                       context_instance=RequestContext(rq))
 
 
+@login_required
+def propertyDetail(rq):
+    user = rq.user
+    backurl = rq.get_full_path()
+
+    if rq.method == 'GET':
+        propid = rq.GET.get('propertyid')
+        if propid != None:
+            try:
+                this_property = Property.objects.get(pk=propid)
+                if this_property.p_status == 1:
+                    if this_property.p_last_checkoutHis:
+                        checkInOuthis = ActionHistory.objects.get(pk=this_property.p_last_checkoutHis)
+                        price = PropertyPrice.objects.get(pk=checkInOuthis.h_checkinPrice)
+                        priceStr = str(price.pp_currency)+': '+str(price.pp_price)+' - '+str(price.pp_price_name)+'('+str(price.get_pp_rent_circle_display())+')'
+                        tenant = checkInOuthis.h_tenant
+                    else:
+                        checkInOuthis = None
+                        priceStr = ''
+                        tenant = None
+                elif this_property.p_status == 2:
+                    if this_property.p_last_checkinHis:
+                        checkInOuthis = ActionHistory.objects.get(pk=this_property.p_last_checkinHis)
+                        price = PropertyPrice.objects.get(pk=checkInOuthis.h_checkinPrice)
+                        priceStr = str(price.pp_currency)+': '+str(price.pp_price)+' - '+str(price.pp_price_name)+'('+str(price.get_pp_rent_circle_display())+')'
+                        tenant = checkInOuthis.h_tenant
+                    else:
+                        checkInOuthis = None
+                        priceStr = ''
+                        tenant = None
+                else:
+                    pass
+
+            except Property.DoesNotExist:
+                title = u'Error'
+                errorMessage = u'Oops! Property Does not Exist!'
+                return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
+                                      context_instance=RequestContext(rq))
+            return render_to_response('propertyDetail.html', {'title': u'Property Detail', 'property': this_property, 'checkInOuthis': checkInOuthis,
+                                                              'priceStr': priceStr, 'tenant': tenant}, context_instance=RequestContext(rq))
+        else:
+            title = u'Error'
+            errorMessage = u'Property Does not Exist!'
+            backurl = rq.get_full_path()
+            return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
+                                      context_instance=RequestContext(rq))
+    else:
+        form = forms.CheckoutForm(rq.POST)
+        print(form.data['action'])
+        print(form.data['checkoutTime'])
+        propid = rq.GET.get('propertyid')
+        if propid != None:
+            try:
+                prop = Property.objects.get(pk=propid)
+                checkinhis = ActionHistory.objects.get(pk=prop.p_last_checkinHis)
+            except Property.DoesNotExist:
+                title = u'Error'
+                errorMessage = u'Property Does not Exist!'
+                return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
+                                      context_instance=RequestContext(rq))
+
+            if form.is_valid():
+                actionhis = ActionHistory.objects.create(
+                    h_property = prop,
+                    h_action = 2,
+                    h_operator = user,
+                    h_tenant = checkinhis.h_tenant,
+                    h_checkinTime = checkinhis.h_checkinTime,
+                    h_checkinPrice = checkinhis.h_checkinPrice,
+                    h_prox_checkoutTime = checkinhis.h_prox_checkoutTime,
+                    h_checkoutTime = form.data['checkoutTime'],
+                )
+                actionhis.save()
+                prop.p_checkinTime = ''
+                prop.p_status = 1
+                prop.p_tenant = None
+                prop.save()
+                msg = u'Check-out Successful!'
+                #return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))
+                return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'msg': msg},
+                                  context_instance=RequestContext(rq))
+            else:
+                logger.debug(u'Check-out Failed.')
+                return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'property': prop, 'checkinhis': checkinhis},
+                                  context_instance=RequestContext(rq))
+        else:
+            title = u'Error'
+            errorMessage = u'Property Does not Exist!'
+            backurl = rq.path
+            return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
+                                      context_instance=RequestContext(rq))
+
 
 '''
 from rest_framework.views import APIView
