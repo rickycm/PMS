@@ -21,14 +21,16 @@ class CheckinForm(forms.Form):
     properties = forms.ModelChoiceField(queryset=Property.objects.all(), widget=forms.Select(attrs={'class': 'required', 'onChange': 'javascript:getPrice(this.value);'}))
     #action = forms.ChoiceField(choices=ACTION, widget=forms.Select(attrs={'disabled': 'disabled'}))
     action = forms.ChoiceField(choices={(1, u'Check-in')})
+    rent_circle = forms.ChoiceField(choices=RENTAL_TYPE, initial={1: u'Monthly'})
     checkinTime = forms.DateTimeField(required=True, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
                                        "pickSeconds": False, "autoclose": 1, "todayBtn":  1}))
-    prx_checkoutTime = forms.DateTimeField(required=True, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
-                                       "pickSeconds": False, "autoclose": 1, "todayBtn":  1}))
+    circle_count = forms.IntegerField(initial=1, widget=forms.NumberInput(attrs={'class': 'required', 'onBlur': 'javascript:getCheckoutDate();'}))
+    #prx_checkoutTime = forms.DateTimeField(required=True, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
+    #                                        "pickSeconds": False, "autoclose": 1, "todayBtn":  1, "disabled": True}))
+    prx_checkoutTime = forms.DateTimeField(required=True, widget=forms.TextInput(attrs={'class': 'required', 'onClick': 'javascript:getCheckoutDate();'}))
     tenant = forms.ModelChoiceField(queryset=TenantInfo.objects.all(), widget=forms.Select(attrs={'class': 'required', 'onChange': 'javascript:setPayername();'}))
-    rent_circle = forms.ChoiceField(choices=RENTAL_TYPE, initial={1: u'Monthly'})
     price = forms.ModelChoiceField(queryset=PropertyPrice.objects.all(), required=True)
-    deposit_amount = forms.IntegerField(required=True)
+    deposit_amount = forms.IntegerField(required=True, initial=0)
     deposit_currency = forms.CharField(required=True, initial='USD')
     payer_name = forms.CharField(required=True)
 
@@ -55,12 +57,15 @@ class CheckinForm(forms.Form):
         cleaned_data = super(CheckinForm, self).clean()
         checkinTime = cleaned_data.get("checkinTime")
         prx_checkoutTime = cleaned_data.get("prx_checkoutTime")
-
+        print(prx_checkoutTime)
+        return cleaned_data
+'''
         if prx_checkoutTime < checkinTime:
             msg = "Check-out time must be later than Check-in time."
             self.add_error('prx_checkoutTime', msg)
         else:
             return cleaned_data
+'''
 
 
 class CheckoutForm(forms.Form):

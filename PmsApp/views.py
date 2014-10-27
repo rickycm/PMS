@@ -1,6 +1,6 @@
 #coding=utf-8
 import logging, json, time
-from datetime import datetime
+from datetime import datetime, time, date, timedelta
 
 from django.utils import timezone
 from django.shortcuts import render_to_response
@@ -9,8 +9,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
+from django.utils import dateparse
 
-from PmsApp import forms
+from PmsApp import forms, addMonth
 
 from PmsApp.models import *
 
@@ -68,6 +69,44 @@ def property_list(rq):
 
 
 @login_required
+def rentalBill_list(rq):
+    user = rq.user
+    propertyid = int(rq.GET.get('propertyid'))
+    this_property = Property.objects.get(pk=propertyid)
+
+    rentalbillList_paid = RentalBill.objects.filter(rb_property=propertyid, rb_paid=1)
+    rentalbillList_notpaid = RentalBill.objects.filter(rb_property=propertyid, rb_paid=0)
+
+    return render_to_response("rentalBill_list.html",
+                                  {'title': 'Rental Bill List', 'user': user, 'rentalbillList_paid': rentalbillList_paid,
+                                   'rentalbillList_notpaid': rentalbillList_notpaid, 'property': this_property}, context_instance=RequestContext(rq))
+
+
+@login_required
+def payBill(rq):
+    user = rq.user
+    #paid = int(rq.GET.get('paid'))
+    propertyid = int(rq.GET.get('propertyid'))
+    this_property = Property.objects.get(pk=propertyid)
+    billid = int(rq.GET.get('billid'))
+
+    this_bill = RentalBill.objects.get(pk=billid)
+    this_bill.rb_actual_pay_date = datetime.today()
+    this_bill.rb_paid = 1
+    this_bill.save()
+
+    this_property.p_billsNotPaid = this_property.p_billsNotPaid-1
+    this_property.save()
+
+    rentalbillList_paid = RentalBill.objects.filter(rb_property=propertyid, rb_paid=1)
+    rentalbillList_notpaid = RentalBill.objects.filter(rb_property=propertyid, rb_paid=0)
+
+    return render_to_response("rentalBill_list.html",
+                                  {'title': 'Rental Bill List', 'user': user, 'rentalbillList_paid': rentalbillList_paid,
+                                   'rentalbillList_notpaid': rentalbillList_notpaid, 'property': this_property}, context_instance=RequestContext(rq))
+
+
+@login_required
 def checkin(rq):
     user = rq.user
     backurl = rq.get_full_path()
@@ -99,10 +138,12 @@ def checkin(rq):
                 h_property = prop,
                 h_action = form.data['action'],
                 h_operator = user,
-                h_tenant = tenant,
+                h_tenant = tenant.id,
                 h_checkinTime = form.data['checkinTime'],
                 h_prox_checkoutTime = form.data['prx_checkoutTime'],
                 h_checkinPrice = priceid,
+                h_pay_circle = form.data['rent_circle'],
+                h_circle_count = form.data['circle_count'],
             )
             actionhis.save()
 
@@ -117,11 +158,40 @@ def checkin(rq):
             )
             deposit.save()
 
+            #Generate Bill
+            for i in range(int(form.data['circle_count'])):
+                checkinTime = dateparse.parse_datetime(form.data['checkinTime'])
+                if form.data['rent_circle'] == '1':
+                    billdate = addMonth.datetime_offset_by_month(checkinTime, i)
+                    period_end = addMonth.datetime_offset_by_month(checkinTime, i+1)
+                elif form.data['rent_circle'] == '2':
+                    billdate = addMonth.datetime_offset_by_month(checkinTime, i*3)
+                    period_end = addMonth.datetime_offset_by_month(checkinTime, (i+1)*3)
+                elif form.data['rent_circle'] == '3':
+                    billdate = addMonth.datetime_offset_by_month(checkinTime, i*12)
+                    period_end = addMonth.datetime_offset_by_month(checkinTime, (i+1)*12)
+                elif form.data['rent_circle'] == '4':
+                    billdate = checkinTime + timedelta(days=i)
+                    period_end = billdate + timedelta(days=i+1)
+
+                rb = RentalBill.objects.create(
+                    rb_property = prop,
+                    rb_period_start = billdate,
+                    rb_period_end = period_end,
+                    rb_should_pay_date = billdate,
+                    rb_type = form.data['rent_circle'],
+                    rb_tenant = tenant,
+                    rb_actionHistory = actionhis,
+                )
+                rb.save()
+
             prop.p_checkinTime = form.data['checkinTime']
             prop.p_last_checkinHis = actionhis.id
             prop.p_status = 2
             prop.p_tenant = tenant
+            prop.p_billsNotPaid = int(form.data['circle_count'])
             prop.save()
+
             msg = u'Check-In Successful!'
             #return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))
             return render_to_response('checkinForm.html', {'title': u'Check-in', 'form': form, 'msg': msg},
@@ -145,6 +215,26 @@ def propertyPrice_list(request):
         c['value'] = price.id
         price_list.append(c)
     return HttpResponse(json.dumps(price_list))
+
+
+def getCheckoutDate(request):
+    checkoutdate = ''
+    checkinDate = dateparse.parse_datetime(request.GET['checkinDate'])
+    #checkinDate = datetime.strptime(request.GET['checkinDate'])
+    rentCircle = request.GET['rentCircle']
+    circleCount = int(request.GET['circleCount'])
+
+    if rentCircle == '1':
+        checkoutdate = addMonth.datetime_offset_by_month(checkinDate, circleCount)
+    elif rentCircle == '2':
+        checkoutdate = addMonth.datetime_offset_by_month(checkinDate, circleCount*3)
+    elif rentCircle == '3':
+        checkoutdate = addMonth.datetime_offset_by_month(checkinDate, circleCount*12)
+    elif rentCircle == '4':
+        checkoutdate = checkinDate + timedelta(days=circleCount)
+
+    checkoutdate = checkoutdate.replace(hour=checkinDate.hour, minute=checkinDate.minute)
+    return HttpResponse(checkoutdate.strftime("%Y-%m-%d %H:%M"))
 
 
 @login_required

@@ -22,6 +22,11 @@ urlpatterns = patterns('',
     (r'^login-form/$', views.login_form),
     (r'^propertyPrice_list/$', views.propertyPrice_list),
     (r'^propertyDetail/$', views.propertyDetail),
+    (r'^getCheckoutDate/$', views.getCheckoutDate),
+    (r'^billList/$', views.rentalBill_list),
+    (r'^payBill/$', views.payBill),
+
+
     #(r'^accounts/', include('userena.urls')),
     #(r'^property/$', views.PropertyList.as_view()),
     #(r'^patients/(?P<pk>[0-9]+)/$', views.PatientDetail.as_view()),

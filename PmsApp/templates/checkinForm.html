@@ -176,6 +176,53 @@
                 })
             };
 
+            function getCheckoutDate(){
+                $.ajax({
+                    type: "GET",
+                    url: "/getCheckoutDate?checkinDate="+$("#id_checkinTime").val()+"&rentCircle="+$("#id_rent_circle").val()+"&circleCount="+$("#id_circle_count").val(),
+                    dataType:'text',
+                    success: function(data){
+                        $("#id_prx_checkoutTime").val(data);
+                    }
+                })
+            };
+
+            //+---------------------------------------------------
+            //| 日期计算
+            //+---------------------------------------------------
+            function DateAdd(startDate, strInterval, Number) {
+                var dtTmp = startDate;
+                switch (strInterval) {
+                    case 's' :return new Date(Date.parse(dtTmp) + (1000 * Number));
+                    case 'n' :return new Date(Date.parse(dtTmp) + (60000 * Number));
+                    case 'h' :return new Date(Date.parse(dtTmp) + (3600000 * Number));
+                    case 'd' :return new Date(Date.parse(dtTmp) + (86400000 * Number));
+                    case 'w' :return new Date(Date.parse(dtTmp) + ((86400000 * 7) * Number));
+                    case 'q' :return new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + Number*3, dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                    case 'm' :return new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + Number, dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                    case 'y' :return new Date((dtTmp.getFullYear() + Number), dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                }
+            }
+
+            function setProxCheckoutDate(){
+                var checkinDate = new Date($("#id_checkinTime").val());
+                var circleCount = $("#id_circle_count").val();
+                var rentCircle = $("#id_rent_circle").val();
+                var checkoutDate = new Date();
+                if (rentCircle == '1'){
+                    alert(circleCount);
+                    checkoutDate = DateAdd(checkinDate, 'm', circleCount);
+                }else if(rentCircle == '2'){
+                    checkoutDate = DateAdd(checkinDate, 'q', circleCount);
+                }else if(rentCircle == '3'){
+                    checkoutDate = DateAdd(checkinDate, 'y', circleCount);
+                }else if(rentCircle == '4'){
+                    checkoutDate = DateAdd(checkinDate, 'd', circleCount);
+                }
+                alert(checkinDate);
+                alert(checkoutDate);
+            }
+
             function setPayername(){
                 var checkText=$("#id_tenant").find("option:selected").text();
                 $("#id_payer_name").val(checkText);

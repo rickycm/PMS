@@ -46,7 +46,7 @@ class TenantInfo(models.Model):
     t_address = models.CharField(max_length=20, blank=True, null=True)
     t_email = models.EmailField(max_length=1000, verbose_name=u'E-mail', blank=True, null=True)
     t_date = models.DateTimeField(blank=True, null=True, verbose_name=u'Add Date')
-    t_manager = models.ForeignKey(User, related_name=u'manager', blank=True, null=True)
+    t_manager = models.ForeignKey(User, related_name=u'manager')
 
     def __unicode__(self):
         return self.t_name
@@ -87,6 +87,7 @@ class Property(models.Model):
     p_current_price = models.IntegerField(blank=True, null=True)
     p_last_checkinHis = models.IntegerField(blank=True, null=True)
     p_last_checkoutHis = models.IntegerField(blank=True, null=True)
+    p_billsNotPaid = models.IntegerField(blank=True, null=True)
 
     class Meta:
         verbose_name = u'Property'
@@ -101,8 +102,8 @@ class PropertyPrice(models.Model):
     pp_property = models.ForeignKey(Property, verbose_name=u'Property')
     pp_price_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Price Name')
     pp_rent_circle = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True)
-    pp_price = models.IntegerField(blank=True, null=True)
-    pp_currency = models.CharField(max_length=10, blank=True, null=True, verbose_name=u'Currency')
+    pp_price = models.IntegerField()
+    pp_currency = models.CharField(max_length=10, verbose_name=u'Currency')
     pp_add_date = models.DateField(blank=True, null=True, auto_now_add=True, verbose_name=u'Add Date')
 
     def __unicode__(self):
@@ -114,13 +115,14 @@ class ActionHistory(models.Model):
     h_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Date')
     h_action = models.IntegerField(choices=ACTION, default=1, blank=True, null=True, verbose_name=u'Action')
     h_operator = models.ForeignKey(User, verbose_name=u'Operator')
-    h_tenant = models.OneToOneField(TenantInfo, blank=True, null=True)
+    h_tenant = models.IntegerField(blank=True, null=True)
     h_payer_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Payer name')
     h_checkinTime = models.DateTimeField(blank=True, null=True, verbose_name=u'Check-in Time')
     h_checkinPrice = models.IntegerField(blank=True, null=True)
     h_prox_checkoutTime = models.DateTimeField(blank=True, null=True, verbose_name=u'Prox Check-out Time')
     h_checkoutTime = models.DateTimeField(blank=True, null=True, verbose_name=u'Check-out Time')
     h_pay_circle = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True, verbose_name=u'Pay Circle')
+    h_circle_count = models.IntegerField(blank=True, null=True, verbose_name=u'Circle Count')
 
 
 class RentHistory(models.Model):
@@ -151,8 +153,10 @@ class RentalBill(models.Model):
     rb_should_pay_date = models.DateField(blank=True, null=True, verbose_name=u'Due Date')
     rb_actual_pay_date = models.DateField(blank=True, null=True, verbose_name=u'Pay Date')
     rb_type = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True, verbose_name=u'Type')
+    rb_tenant = models.ForeignKey(TenantInfo, verbose_name=u'Tenant')
     rb_payer_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Payer name')
     rb_note = models.CharField(max_length=2000, blank=True, null=True, verbose_name=u'Note')
+    rb_paid = models.IntegerField(choices=PAID, default=0)
     rb_actionHistory = models.ForeignKey(ActionHistory, blank=True, null=True)
     rb_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Add Date')
 
