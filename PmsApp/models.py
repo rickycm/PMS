@@ -47,6 +47,7 @@ class TenantInfo(models.Model):
     t_email = models.EmailField(max_length=1000, verbose_name=u'E-mail', blank=True, null=True)
     t_date = models.DateTimeField(blank=True, null=True, verbose_name=u'Add Date')
     t_manager = models.ForeignKey(User, related_name=u'manager')
+    t_status = models.IntegerField(default=1)
 
     def __unicode__(self):
         return self.t_name
@@ -73,17 +74,17 @@ class ManagerInfo(models.Model):
 
 
 class Property(models.Model):
-    p_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Property Name')
-    p_type = models.IntegerField(choices=P_TYPE, default=1, blank=True, null=True, verbose_name=u'Property Type')
+    p_name = models.CharField(max_length=200, verbose_name=u'Property Name')
+    p_type = models.IntegerField(choices=P_TYPE, default=1, verbose_name=u'Property Type')
     p_address = models.CharField(max_length=20, blank=True, null=True, verbose_name=u'Address')
     p_owner = models.ForeignKey(User, related_name=u'owner', verbose_name=u'Owner')
-    p_manager = models.ForeignKey(User, related_name=u'Property manager', blank=True, null=True, verbose_name=u'Manager')
+    p_manager = models.ForeignKey(User, related_name=u'Property manager', verbose_name=u'Manager')
     p_tenant = models.ForeignKey(TenantInfo, blank=True, null=True, verbose_name=u'Tenant')
     p_area = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Area')
     p_buildtime = models.DateField(blank=True, null=True, verbose_name=u'Buildtime')
     p_rent_circle = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True, verbose_name=u'Rent Circle')
     p_add_date = models.DateField(blank=True, null=True, auto_now_add=True, verbose_name=u'Add Date')
-    p_status = models.IntegerField(choices=P_STATUS, default=1, blank=True, null=True, verbose_name=u'Property Status')
+    p_status = models.IntegerField(choices=P_STATUS, default=1, verbose_name=u'Property Status')
     p_current_price = models.IntegerField(blank=True, null=True)
     p_last_checkinHis = models.IntegerField(blank=True, null=True)
     p_last_checkoutHis = models.IntegerField(blank=True, null=True)
@@ -96,7 +97,10 @@ class Property(models.Model):
 
     def __unicode__(self):
         return self.p_name
-
+'''
+    def __str__(self):
+        return self.id
+'''
 
 class PropertyPrice(models.Model):
     pp_property = models.ForeignKey(Property, verbose_name=u'Property')
@@ -151,7 +155,7 @@ class RentalBill(models.Model):
     rb_period_start = models.DateField(blank=True, null=True, verbose_name=u'Start Date')
     rb_period_end = models.DateField(blank=True, null=True, verbose_name=u'End Date')
     rb_should_pay_date = models.DateField(blank=True, null=True, verbose_name=u'Due Date')
-    rb_actual_pay_date = models.DateField(blank=True, null=True, verbose_name=u'Pay Date')
+    rb_actual_pay_date = models.DateField(auto_now=True, blank=True, null=True, verbose_name=u'Pay Date')
     rb_type = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True, verbose_name=u'Type')
     rb_tenant = models.ForeignKey(TenantInfo, verbose_name=u'Tenant')
     rb_payer_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Payer name')

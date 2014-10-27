@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load tags_extras %}
     {% block pagehead %}
         {{ block.super }}
 
@@ -44,7 +44,7 @@
                                     </a>
                                 </li>
                             </ul>
-                            <h2><i class="icofont-table"></i> Property List</h2>
+                            <h2><i class="icofont-table"></i> Bill List</h2>
                         </div><!-- /content-header -->
 
                         <!-- content-breadcrumb -->
@@ -69,7 +69,8 @@
                             <!--breadcrumb-->
                             <ul class="breadcrumb">
                                 <li><a href="/"><i class="icofont-home"></i> Dashboard</a> <span class="divider">&rsaquo;</span></li>
-                                <li class="active">Property List</li>
+                                <li><a href="/property/list/"> Property List</a> <span class="divider">&rsaquo;</span></li>
+                                <li class="active">Bill List</li>
                             </ul><!--/breadcrumb-->
                         </div><!-- /content-breadcrumb -->
 
@@ -81,42 +82,86 @@
                                 <div class="span12">
                                     <div class="box corner-all">
                                         <div class="box-header grd-white corner-top">
-                                            <span>Property List</span>
-                                            <span class="pull-right"><a class="btn btn-primary" href="/propertyForm">New Property</a></span>
+                                            <span>Rental Bill Not Paid</span>
                                         </div>
                                         <div class="box-body">
                                             <table id="datatables" class="table table-bordered table-striped responsive">
                                                 <thead>
                                                     <tr>
                                                         <th>Property Name</th>
-                                                        <th>Property Type</th>
-                                                        <th>Address</th>
+                                                        <th>Tenant</th>
+                                                        <th>Period Start</th>
+                                                        <th>Period End</th>
+                                                        <th>Should Pay</th>
                                                         <th>Rent Circle</th>
-                                                        <th>Status</th>
-                                                        <th>Bills</th>
-                                                        <th>Actions</th>
+                                                        <th>Bill Note</th>
+                                                        <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="listbody">
-                                                    {% for property in properties %}
+                                                    {% for rb in notPaidBillList %}
                                                         <tr class="odd gradeX">
-                                                            <td><a href="/propertyDetail/?propertyid={{ property.id }}">{{ property.p_name }}</a></td>
-                                                            <td>{{ property.get_p_type_display }}</td>
-                                                            <td>{{ property.p_address }}</td>
-                                                            <td class="center">{{ property.get_p_rent_circle_display }}</td>
-                                                            <td class="center">{{ property.get_p_status_display }}</td>
+                                                            <td><a href='/propertyDetail/?propertyid={{ rb.rb_property|getPropertyId:"id" }}'>{{ rb.rb_property|getPropertyId:"name" }}</a></td>
+                                                            <td>{{ rb.rb_tenant }}</td>
+                                                            <td>{{ rb.rb_period_start|date:"Y-m-d" }}</td>
+                                                            <td class="center">{{ rb.rb_period_end|date:"Y-m-d" }}</td>
+                                                            <td class="center">{{ rb.rb_should_pay_date|date:"Y-m-d" }}</td>
+                                                            <td class="center">{{ rb.get_rb_type_display }}</td>
+                                                            <td class="center">{{ rb.rb_note }}</td>
                                                             <td class="center">
-                                                                <a class="btn btn-info btn-small" href="/billList/?propertyid={{ property.id }}&method=list">{{ property.p_billsNotPaid }}</a>
+                                                                {% ifequal rb.rb_paid 0 %}
+                                                                <a class="btn btn-success btn-small" href="/payBill/?method=pay&propertyid={{ rb.rb_property|getPropertyId:'id' }}&billid={{ rb.id }}&backurl=/allBill_list "><i class="icon-check"></i> Set Paid</a>
+                                                                {% endifequal %}
+                                                                <a class="btn btn-danger btn-small" href="/payBill/?method=delete&propertyid={{ rb.rb_property|getPropertyId:'id' }}&billid={{ rb.id }}&backurl=/allBill_list "><i class="icon-remove"></i> Delete</a>
                                                             </td>
+                                                        </tr>
+                                                    {% endfor %}
+
+                                                </tbody>
+                                            </table>
+
+                                        </div><!-- /box-body -->
+                                    </div><!-- /box -->
+                                </div><!-- /span -->
+                            </div><!--/datatables-->
+
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <div class="box corner-all">
+                                        <div class="box-header grd-white corner-top">
+                                            <span>Rental Bill Paid</span>
+                                        </div>
+                                        <div class="box-body">
+                                            <table id="datatables2" class="table table-bordered table-striped responsive">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Property Name</th>
+                                                        <th>Tenant</th>
+                                                        <th>Period Start</th>
+                                                        <th>Period End</th>
+                                                        <th>Should Pay</th>
+                                                        <th>Pay Date</th>
+                                                        <th>Rent Circle</th>
+                                                        <th>Bill Note</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="listbody2">
+                                                    {% for rbp in paidBillList %}
+                                                        <tr class="odd gradeX">
+                                                            <td><a href='/propertyDetail/?propertyid={{ rbp.rb_property|getPropertyId:"id" }}'>{{ rbp.rb_property|getPropertyId:"name" }}</a></td>
+                                                            <td>{{ rbp.rb_tenant }}</td>
+                                                            <td>{{ rbp.rb_period_start|date:"Y-m-d" }}</td>
+                                                            <td class="center">{{ rbp.rb_period_end|date:"Y-m-d" }}</td>
+                                                            <td class="center">{{ rbp.rb_should_pay_date|date:"Y-m-d" }}</td>
+                                                            <td class="center">{{ rbp.rb_actual_pay_date|date:"Y-m-d" }}</td>
+                                                            <td class="center">{{ rbp.get_rb_type_display }}</td>
+                                                            <td class="center">{{ rbp.rb_note }}</td>
                                                             <td class="center">
-                                                                {% ifequal property.p_status 1 %}
-                                                                <a class="btn btn-success btn-small" href="/checkinForm/?propertyid={{ property.id }}"><i class="icon-user"></i> Check-in</a>
+                                                                {% ifequal rbp.rb_paid 1 %}
+                                                                <a class="btn btn-info btn-small" href="/payBill/?method=r_pay&propertyid={{ rbp.rb_property|getPropertyId:'id' }}&billid={{ rbp.id }}&backurl=/allBill_list "><i class="icon-refresh"></i> Not Paid</a>
                                                                 {% endifequal %}
-                                                                {% ifequal property.p_status 2 %}
-                                                                <a class="btn btn-primary btn-small" href="/checkoutForm/?propertyid={{ property.id }}"><i class="icon-share"></i> Check-out</a>
-                                                                {% endifequal %}
-                                                                <a class="btn btn-info btn-small" href="/propertyForm/?propertyid={{ property.id }}"><i class="icon-share"></i> Edit</a>
-                                                                <a class="btn btn-danger btn-small" href="/deleteProperty/?propertyid={{ property.id }}"><i class="icon-share"></i> Delete</a>
+                                                                <a class="btn btn-danger btn-small" href="/payBill/?method=delete&propertyid={{ rbp.rb_property|getPropertyId:'id' }}&billid={{ rbp.id }}&backurl=/allBill_list "><i class="icon-remove"></i> Delete</a>
                                                             </td>
                                                         </tr>
                                                     {% endfor %}
@@ -178,7 +223,16 @@
                             "sLengthMenu": "_MENU_ records per page"
                     }
                 });
-                
+
+                // datatables
+                $('#datatables2').dataTable( {
+                    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+                    "sPaginationType": "bootstrap",
+                    "oLanguage": {
+                            "sLengthMenu": "_MENU_ records per page"
+                    }
+                });
+
                 // datatables table tools
                 $('#datatablestools').dataTable({
                     "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",

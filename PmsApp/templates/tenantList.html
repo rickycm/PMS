@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load tags_extras %}
     {% block pagehead %}
         {{ block.super }}
 
@@ -44,7 +44,7 @@
                                     </a>
                                 </li>
                             </ul>
-                            <h2><i class="icofont-table"></i> Property List</h2>
+                            <h2><i class="icofont-table"></i> Tenant List</h2>
                         </div><!-- /content-header -->
 
                         <!-- content-breadcrumb -->
@@ -69,7 +69,7 @@
                             <!--breadcrumb-->
                             <ul class="breadcrumb">
                                 <li><a href="/"><i class="icofont-home"></i> Dashboard</a> <span class="divider">&rsaquo;</span></li>
-                                <li class="active">Property List</li>
+                                <li class="active">Tenant List</li>
                             </ul><!--/breadcrumb-->
                         </div><!-- /content-breadcrumb -->
 
@@ -81,42 +81,34 @@
                                 <div class="span12">
                                     <div class="box corner-all">
                                         <div class="box-header grd-white corner-top">
-                                            <span>Property List</span>
-                                            <span class="pull-right"><a class="btn btn-primary" href="/propertyForm">New Property</a></span>
+                                            <span>Tenant List</span>
+                                            <span class="pull-right"><a class="btn btn-primary" href="/tenantForm">New Tenant</a></span>
                                         </div>
                                         <div class="box-body">
                                             <table id="datatables" class="table table-bordered table-striped responsive">
                                                 <thead>
                                                     <tr>
-                                                        <th>Property Name</th>
-                                                        <th>Property Type</th>
+                                                        <th>Tenant Name</th>
+                                                        <th>Tenant Type</th>
+                                                        <th>Phone</th>
                                                         <th>Address</th>
-                                                        <th>Rent Circle</th>
-                                                        <th>Status</th>
-                                                        <th>Bills</th>
-                                                        <th>Actions</th>
+                                                        <th>Email</th>
+                                                        <th>Add Date</th>
+                                                        <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="listbody">
-                                                    {% for property in properties %}
+                                                    {% for tenant in tenantlist %}
                                                         <tr class="odd gradeX">
-                                                            <td><a href="/propertyDetail/?propertyid={{ property.id }}">{{ property.p_name }}</a></td>
-                                                            <td>{{ property.get_p_type_display }}</td>
-                                                            <td>{{ property.p_address }}</td>
-                                                            <td class="center">{{ property.get_p_rent_circle_display }}</td>
-                                                            <td class="center">{{ property.get_p_status_display }}</td>
+                                                            <td>{{ tenant.t_name }}</td>
+                                                            <td>{{ tenant.get_t_tpye_display }}</td>
+                                                            <td>{{ tenant.t_phone }}</td>
+                                                            <td class="center">{{ tenant.t_address }}</td>
+                                                            <td class="center"><a href="mailto:{{ tenant.t_email }}">{{ tenant.t_email }}</a></td>
+                                                            <td class="center">{{ tenant.t_date|date:"Y-m-d" }}</td>
                                                             <td class="center">
-                                                                <a class="btn btn-info btn-small" href="/billList/?propertyid={{ property.id }}&method=list">{{ property.p_billsNotPaid }}</a>
-                                                            </td>
-                                                            <td class="center">
-                                                                {% ifequal property.p_status 1 %}
-                                                                <a class="btn btn-success btn-small" href="/checkinForm/?propertyid={{ property.id }}"><i class="icon-user"></i> Check-in</a>
-                                                                {% endifequal %}
-                                                                {% ifequal property.p_status 2 %}
-                                                                <a class="btn btn-primary btn-small" href="/checkoutForm/?propertyid={{ property.id }}"><i class="icon-share"></i> Check-out</a>
-                                                                {% endifequal %}
-                                                                <a class="btn btn-info btn-small" href="/propertyForm/?propertyid={{ property.id }}"><i class="icon-share"></i> Edit</a>
-                                                                <a class="btn btn-danger btn-small" href="/deleteProperty/?propertyid={{ property.id }}"><i class="icon-share"></i> Delete</a>
+                                                                <a class="btn btn-success btn-small" href="/tenantForm/?tenantId={{ tenant.id }} "><i class="icon-check"></i> Edit</a>
+                                                                <a class="btn btn-danger btn-small" href="/deleteTenant/?tenantId={{ tenant.id }} "><i class="icon-remove"></i> Delete</a>
                                                             </td>
                                                         </tr>
                                                     {% endfor %}
@@ -128,7 +120,6 @@
                                     </div><!-- /box -->
                                 </div><!-- /span -->
                             </div><!--/datatables-->
-
 
                             <!--/tables-->
                         </div><!--/content-body -->
@@ -178,7 +169,16 @@
                             "sLengthMenu": "_MENU_ records per page"
                     }
                 });
-                
+
+                // datatables
+                $('#datatables2').dataTable( {
+                    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+                    "sPaginationType": "bootstrap",
+                    "oLanguage": {
+                            "sLengthMenu": "_MENU_ records per page"
+                    }
+                });
+
                 // datatables table tools
                 $('#datatablestools').dataTable({
                     "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",

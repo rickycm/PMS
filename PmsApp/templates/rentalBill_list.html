@@ -95,6 +95,7 @@
                                                         <th>Should Pay</th>
                                                         <th>Rent Circle</th>
                                                         <th>Bill Note</th>
+                                                        <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="listbody">
@@ -109,7 +110,7 @@
                                                             <td class="center">{{ rb.rb_note }}</td>
                                                             <td class="center">
                                                                 {% ifequal rb.rb_paid 0 %}
-                                                                <a class="btn btn-success btn-small" href="/payBill/?propertyid={{ property.id }}&billid={{ rb.id }}"><i class="icon-user"></i> Set Paid</a>
+                                                                <a class="btn btn-success btn-small" href="/payBill/?propertyid={{ property.id }}&billid={{ rb.id }}&backurl=/billList "><i class="icon-user"></i> Set Paid</a>
                                                                 {% endifequal %}
                                                             </td>
                                                         </tr>
@@ -141,6 +142,7 @@
                                                         <th>Pay Date</th>
                                                         <th>Rent Circle</th>
                                                         <th>Bill Note</th>
+                                                        <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="listbody2">
@@ -153,7 +155,12 @@
                                                             <td class="center">{{ rbp.rb_should_pay_date|date:"Y-m-d" }}</td>
                                                             <td class="center">{{ rbp.rb_actual_pay_date|date:"Y-m-d" }}</td>
                                                             <td class="center">{{ rbp.get_rb_type_display }}</td>
-                                                            <td class="center">{{ rb.rb_note }}</td>
+                                                            <td class="center">{{ rbp.rb_note }}</td>
+                                                            <td class="center">
+                                                                {% ifequal rbp.rb_paid 1 %}
+                                                                <a class="btn btn-success btn-small" href="/payBill_reverse/?propertyid={{ rbp.rb_property|getPropertyId:'id' }}&billid={{ rbp.id }}&backurl=/billList "><i class="icon-user"></i> Not Paid</a>
+                                                                {% endifequal %}
+                                                            </td>
                                                         </tr>
                                                     {% endfor %}
 

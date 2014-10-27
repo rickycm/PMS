@@ -25,10 +25,15 @@ urlpatterns = patterns('',
     (r'^getCheckoutDate/$', views.getCheckoutDate),
     (r'^billList/$', views.rentalBill_list),
     (r'^payBill/$', views.payBill),
-
+    (r'^payBill_reverse/$', views.payBill_reverse),
+    (r'^allBill_list/$', views.allBill_list),
+    (r'^tenantList/$', views.tenantList),
+    (r'^propertyForm/$', views.propertyForm),
+    (r'^tenantForm/$', views.tenantForm),
+    (r'^deleteProperty/$', views.deleteProperty),
 
     #(r'^accounts/', include('userena.urls')),
     #(r'^property/$', views.PropertyList.as_view()),
     #(r'^patients/(?P<pk>[0-9]+)/$', views.PatientDetail.as_view()),
-    url(r'^datetime/$', views.datetime),  # test
+    #url(r'^datetime/$', views.datetime),  # test
 )

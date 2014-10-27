@@ -1,5 +1,5 @@
 #coding=utf-8
-import logging, json, time
+import logging, json
 from datetime import datetime, time, date, timedelta
 
 from django.utils import timezone
@@ -77,31 +77,99 @@ def rentalBill_list(rq):
     rentalbillList_paid = RentalBill.objects.filter(rb_property=propertyid, rb_paid=1)
     rentalbillList_notpaid = RentalBill.objects.filter(rb_property=propertyid, rb_paid=0)
 
+    return render_to_response("allBill_list.html",
+                                  {'title': 'Rental Bill List', 'user': user, 'notPaidBillList': rentalbillList_notpaid, 'paidBillList': rentalbillList_paid}, context_instance=RequestContext(rq))
     return render_to_response("rentalBill_list.html",
                                   {'title': 'Rental Bill List', 'user': user, 'rentalbillList_paid': rentalbillList_paid,
                                    'rentalbillList_notpaid': rentalbillList_notpaid, 'property': this_property}, context_instance=RequestContext(rq))
 
 
 @login_required
+def allBill_list(rq):
+    user = rq.user
+    properties = Property.objects.filter(p_manager=user)
+    notPaidBillList = []
+    paidBillList = []
+    for this_property in properties:
+        rentalbillList_paid = RentalBill.objects.filter(rb_property=this_property, rb_paid=1)
+        rentalbillList_notpaid = RentalBill.objects.filter(rb_property=this_property, rb_paid=0)
+        for rnp in rentalbillList_notpaid:
+            notPaidBillList.append(rnp)
+        for rp in rentalbillList_paid:
+            paidBillList.append(rp)
+
+    return render_to_response("allBill_list.html",
+                                  {'title': 'Rental Bill List', 'user': user, 'notPaidBillList': notPaidBillList, 'paidBillList': paidBillList}, context_instance=RequestContext(rq))
+
+
+@login_required
 def payBill(rq):
     user = rq.user
+    method = rq.GET.get('method')
+    backurl = rq.GET.get('backurl')
+    #paid = int(rq.GET.get('paid'))
+    propertyid = int(rq.GET.get('propertyid'))
+    this_property = Property.objects.get(pk=propertyid)
+    billid = int(rq.GET.get('billid'))
+
+    if method == 'pay':
+        this_bill = RentalBill.objects.get(pk=billid)
+        #this_bill.rb_actual_pay_date = datetime.today()
+        this_bill.rb_paid = 1
+        this_bill.save()
+
+        this_property.p_billsNotPaid = this_property.p_billsNotPaid-1
+        this_property.save()
+    elif method == 'r_pay':
+        this_bill = RentalBill.objects.get(pk=billid)
+        #this_bill.rb_actual_pay_date = datetime.today()
+        this_bill.rb_paid = 0
+        this_bill.save()
+
+        this_property.p_billsNotPaid = this_property.p_billsNotPaid+1
+        this_property.save()
+    elif method == 'delete':
+
+        this_bill = RentalBill.objects.get(pk=billid)
+        #this_bill.rb_actual_pay_date = datetime.today()
+        if this_bill.rb_paid == 0:
+            this_property.p_billsNotPaid = this_property.p_billsNotPaid-1
+            this_property.save()
+
+        this_bill.rb_paid = -1
+        this_bill.save()
+
+
+    rentalbillList_paid = RentalBill.objects.filter(rb_property=propertyid, rb_paid=1)
+    rentalbillList_notpaid = RentalBill.objects.filter(rb_property=propertyid, rb_paid=0)
+
+    return HttpResponseRedirect(backurl)
+    return render_to_response(backurl,
+                                  {'title': 'Rental Bill List', 'user': user, 'rentalbillList_paid': rentalbillList_paid,
+                                   'rentalbillList_notpaid': rentalbillList_notpaid, 'property': this_property}, context_instance=RequestContext(rq))
+
+
+@login_required
+def payBill_reverse(rq):
+    user = rq.user
+    backurl = rq.GET.get('backurl')
     #paid = int(rq.GET.get('paid'))
     propertyid = int(rq.GET.get('propertyid'))
     this_property = Property.objects.get(pk=propertyid)
     billid = int(rq.GET.get('billid'))
 
     this_bill = RentalBill.objects.get(pk=billid)
-    this_bill.rb_actual_pay_date = datetime.today()
-    this_bill.rb_paid = 1
+    #this_bill.rb_actual_pay_date = datetime.today()
+    this_bill.rb_paid = 0
     this_bill.save()
 
-    this_property.p_billsNotPaid = this_property.p_billsNotPaid-1
+    this_property.p_billsNotPaid = this_property.p_billsNotPaid+1
     this_property.save()
 
     rentalbillList_paid = RentalBill.objects.filter(rb_property=propertyid, rb_paid=1)
     rentalbillList_notpaid = RentalBill.objects.filter(rb_property=propertyid, rb_paid=0)
-
-    return render_to_response("rentalBill_list.html",
+    return HttpResponseRedirect(backurl)
+    return render_to_response(backurl,
                                   {'title': 'Rental Bill List', 'user': user, 'rentalbillList_paid': rentalbillList_paid,
                                    'rentalbillList_notpaid': rentalbillList_notpaid, 'property': this_property}, context_instance=RequestContext(rq))
 
@@ -192,7 +260,7 @@ def checkin(rq):
             prop.p_billsNotPaid = int(form.data['circle_count'])
             prop.save()
 
-            msg = u'Check-In Successful!'
+            msg = u'Check-In Success!'
             #return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))
             return render_to_response('checkinForm.html', {'title': u'Check-in', 'form': form, 'msg': msg},
                               context_instance=RequestContext(rq))
@@ -293,7 +361,7 @@ def checkout(rq):
                 prop.p_status = 1
                 prop.p_tenant = None
                 prop.save()
-                msg = u'Check-out Successful!'
+                msg = u'Check-out Success!'
                 #return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))
                 return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'msg': msg},
                                   context_instance=RequestContext(rq))
@@ -355,51 +423,131 @@ def propertyDetail(rq):
             backurl = rq.get_full_path()
             return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
                                       context_instance=RequestContext(rq))
-    else:
-        form = forms.CheckoutForm(rq.POST)
-        print(form.data['action'])
-        print(form.data['checkoutTime'])
-        propid = rq.GET.get('propertyid')
-        if propid != None:
-            try:
-                prop = Property.objects.get(pk=propid)
-                checkinhis = ActionHistory.objects.get(pk=prop.p_last_checkinHis)
-            except Property.DoesNotExist:
-                title = u'Error'
-                errorMessage = u'Property Does not Exist!'
-                return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
-                                      context_instance=RequestContext(rq))
 
-            if form.is_valid():
-                actionhis = ActionHistory.objects.create(
-                    h_property = prop,
-                    h_action = 2,
-                    h_operator = user,
-                    h_tenant = checkinhis.h_tenant,
-                    h_checkinTime = checkinhis.h_checkinTime,
-                    h_checkinPrice = checkinhis.h_checkinPrice,
-                    h_prox_checkoutTime = checkinhis.h_prox_checkoutTime,
-                    h_checkoutTime = form.data['checkoutTime'],
-                )
-                actionhis.save()
-                prop.p_checkinTime = ''
-                prop.p_status = 1
-                prop.p_tenant = None
-                prop.save()
-                msg = u'Check-out Successful!'
-                #return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))
-                return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'msg': msg},
-                                  context_instance=RequestContext(rq))
-            else:
-                logger.debug(u'Check-out Failed.')
-                return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'property': prop, 'checkinhis': checkinhis},
-                                  context_instance=RequestContext(rq))
+
+@login_required
+@csrf_protect
+def propertyForm(rq):
+    user = rq.user
+    backurl = rq.get_full_path()
+
+    if rq.method == 'GET':
+        propidStr = rq.GET.get('propertyid')
+        if propidStr:
+            propid = int(propidStr)
+            try:
+                this_property = Property.objects.get(pk=propid)
+                form = forms.PropertyForm(instance=this_property)
+            except:
+                form = forms.PropertyForm()
         else:
-            title = u'Error'
-            errorMessage = u'Property Does not Exist!'
-            backurl = rq.path
-            return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
-                                      context_instance=RequestContext(rq))
+            form = forms.PropertyForm()
+
+        return render_to_response('propertyForm.html', {'title': u'Property Form', 'form': form}, context_instance=RequestContext(rq))
+    else:
+        form = forms.PropertyForm(rq.POST)
+        if form.is_valid():
+            try:
+                owner = User.objects.get(pk=int(form.data['p_owner']))
+            except:
+                print(int(form.data['p_owner']))
+                #owner = User.objects.get(pk=1)
+            new_property = Property.objects.create(
+                p_name = form.data['p_name'],
+                p_type = int(form.data['p_type']),
+                p_address = form.data['p_address'],
+                p_owner = owner,
+                p_manager = user,
+                p_area = form.data['p_area'],
+                p_buildtime = form.data['p_buildtime'],
+                p_rent_circle = int(form.data['p_rent_circle']),
+                p_status = int(form.data['p_status']),
+                p_billsNotPaid = 0,
+            )
+            new_property.save()
+            msg = u'Add Property Success!'
+            #return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))
+            return render_to_response('propertyDetail.html', {'title': u'Property Detail', 'property': new_property}, context_instance=RequestContext(rq))
+        else:
+            logger.debug(u'Add Property Failed.')
+            return render_to_response('propertyForm.html', {'title': u'Property Form', 'form': form}, context_instance=RequestContext(rq))
+
+
+@login_required
+@csrf_protect
+def tenantForm(rq):
+    user = rq.user
+    backurl = rq.get_full_path()
+
+    if rq.method == 'GET':
+        tenantIdStr = rq.GET.get('tenantId')
+        if tenantIdStr:
+            tenantId = int(tenantIdStr)
+            try:
+                tenant = TenantInfo.objects.get(pk=tenantId)
+                form = forms.TenantForm(instance=tenant)
+            except:
+                form = forms.TenantForm()
+        else:
+            form = forms.TenantForm()
+
+        return render_to_response('tenantForm.html', {'title': u'Tenant Form', 'form': form}, context_instance=RequestContext(rq))
+    else:
+        form = forms.TenantForm(rq.POST)
+        if form.is_valid():
+            new_tenant = TenantInfo.objects.create(
+                t_name = form.data['t_name'],
+                t_tpye = int(form.data['t_tpye']),
+                t_phone = form.data['t_phone'],
+                t_address = form.data['t_address'],
+                t_email = form.data['t_email'],
+                t_manager = user,
+            )
+            new_tenant.save()
+            msg = u'Add Tenant Success!'
+            return HttpResponseRedirect('/tenantList')
+            #return render_to_response('propertyDetail.html', {'title': u'Property Detail', 'property': new_property}, context_instance=RequestContext(rq))
+        else:
+            logger.debug(u'Add Tenant Failed.')
+            return render_to_response('tenantForm.html', {'title': u'Tenant Form', 'form': form}, context_instance=RequestContext(rq))
+
+
+@login_required
+def tenantList(rq):
+    user = rq.user
+    tenantlist = TenantInfo.objects.filter(t_manager=user)
+
+    return render_to_response("tenantList.html",
+                                  {'title': 'Tenant List', 'user': user, 'tenantlist': tenantlist}, context_instance=RequestContext(rq))
+
+
+@login_required
+def deleteTenant(rq):
+    user = rq.user
+    tenantid = int(rq.GET.get('tenantId'))
+    this_tenant = TenantInfo.objects.get(pk=tenantid)
+    this_tenant.t_status = -1
+    this_tenant.save()
+
+    return HttpResponseRedirect('/tenantList')
+
+
+@login_required
+def deleteProperty(rq):
+    user = rq.user
+    propid = int(rq.GET.get('propertyid'))
+    this_property = Property.objects.get(pk=propid)
+    this_property.p_status = -1
+    this_property.p_billsNotPaid = 0
+    this_property.save()
+
+    billList = RentalBill.objects.filter(rb_property=this_property)
+    for bl in billList:
+        bl.rb_paid = -1
+        bl.save()
+
+    return render_to_response("tenantList.html",
+                                  {'title': 'Tenant List', 'user': user, 'tenantlist': tenantlist}, context_instance=RequestContext(rq))
 
 
 '''

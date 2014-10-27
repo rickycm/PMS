@@ -86,3 +86,25 @@ class CheckoutForm(forms.Form):
         else:
             return cleaned_data
         '''
+
+
+class PropertyForm(forms.ModelForm):
+
+    class Meta:
+        model = Property
+        fields = ('p_name', 'p_type', 'p_address', 'p_owner', 'p_area', 'p_buildtime', 'p_rent_circle', 'p_status')
+
+    def clean(self):
+        cleaned_data = super(PropertyForm, self).clean()
+        return cleaned_data
+
+
+class TenantForm(forms.ModelForm):
+
+    class Meta:
+        model = TenantInfo
+        fields = ('t_name', 't_tpye', 't_phone', 't_address', 't_email')
+
+    def clean(self):
+        cleaned_data = super(TenantForm, self).clean()
+        return cleaned_data
