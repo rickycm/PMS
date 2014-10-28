@@ -22,7 +22,7 @@
                         
                         <!-- content-breadcrumb -->
                         <div class="content-breadcrumb">
-                            <!--breadcrumb-nav-->
+                            <!--breadcrumb-nav
                             <ul class="breadcrumb-nav pull-right">
                                 <li class="divider"></li>
                                 <li class="btn-group">
@@ -46,27 +46,16 @@
                         
                         <!-- content-body -->
                         <div class="content-body">
+<div class="row-fluid"><div class="span12">
                             <!-- dashboar -->
                             <div class="shortcut-group">
                                                 <div class="shortcut-group">
                                                 <ul class="b-btn-group">
                                                     <li>
-                                                        <a href="#" class="b-btn grd-teal">
+                                                        <a href="/property/list/" class="b-btn grd-teal">
                                                             <span class="b-btn-slide-text color-white">Go</span>
                                                             <i class="img icofont-bar-chart color-silver helper-font-48"></i>
-                                                            <span class="b-btn-text helper-font-24 color-white"><small>Properties</small> 30</span>
-                                                            <span class="b-btn-icon-right">
-                                                                <span>
-                                                                    <i class="icofont-arrow-right helper-font-24 color-white"></i>
-                                                                </span>
-                                                            </span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" class="b-btn grd-green">
-                                                            <span class="b-btn-slide-text color-white">Go</span>
-                                                            <i class="img icofont-plus-sign color-silver helper-font-48"></i>
-                                                            <span class="b-btn-text helper-font-24 color-white"><small>Bills to Pay</small> 25</span>
+                                                            <span class="b-btn-text helper-font-24 color-white"><small>Properties</small> {{ propertyCount }}</span>
                                                             <span class="b-btn-icon-right">
                                                                 <span>
                                                                     <i class="icofont-arrow-down helper-font-24 color-white"></i>
@@ -75,10 +64,22 @@
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="b-btn grd-blue">
+                                                        <a href="/tenantList" class="b-btn grd-green">
+                                                            <span class="b-btn-slide-text color-white">Go</span>
+                                                            <i class="img icofont-plus-sign color-silver helper-font-48"></i>
+                                                            <span class="b-btn-text helper-font-24 color-white"><small>Tenants</small> {{ tenantCount }}</span>
+                                                            <span class="b-btn-icon-right">
+                                                                <span>
+                                                                    <i class="icofont-arrow-down helper-font-24 color-white"></i>
+                                                                </span>
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/allBill_list" class="b-btn grd-blue">
                                                             <span class="b-btn-slide-text color-white">Go</span>
                                                             <span class="img color-silver helper-font-48">$</span>
-                                                            <span class="b-btn-text helper-font-24 color-white"><small>Monthly Total</small> $2,100</span>
+                                                            <span class="b-btn-text helper-font-24 color-white"><small>Bills to Pay</small> {{ billToPayCount }}</span>
                                                             <span class="b-btn-icon-right">
                                                                 <span>
                                                                     <i class="icofont-arrow-down helper-font-24 color-white"></i>
@@ -148,206 +149,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div><!-- /tab stat -->
+</div></div>                            </div><!-- /tab stat -->
 
-                            <!-- tab resume content -->
-                            <div class="row-fluid">
-                                <!-- tab resume update -->
-                                <div class="span6">
-                                    <div class="box-tab corner-all">
-                                        <div class="box-header corner-top">
-                                            <!--tab action-->
-                                            <div class="header-control pull-right">
-                                                <a data-box="collapse"><i class="icofont-caret-up"></i></a>
-                                                <a data-box="close" data-hide="rotateOutDownLeft">&times;</a>
-                                            </div>
-                                            <ul class="nav nav-pills">
-                                                <!--tab menus-->
-                                                <li class="active"><a data-toggle="tab" href="#recent-orders">Recent Orders</a></li>
-                                                <li><a data-toggle="tab" href="#recent-posts">Recent Posts</a></li>
-                                                <li><a data-toggle="tab" href="#recent-comments">Recent Comments</a></li><!--/tab menus-->
-                                            </ul>
-                                        </div>
-                                        <div class="box-body">
-                                            <!-- widgets-tab-body -->
-                                            <div class="tab-content">
-                                                <div class="tab-pane fade in active" id="recent-orders">
-                                                    <div class="media">
-                                                        <a class="pull-left" href="#">
-                                                            <img class="media-object" data-src="js/holder.js/64x64" />
-                                                        </a>
-                                                        <div class="media-body">
-                                                            <h4 class="media-heading"><a href="#">Lorem ipsum </a><small class="helper-font-small">by john doe on 22 aug 2012, ip 192.168.56.7</small></h4>
-                                                            <p>Raw denim you probably haven't heard of them jean shorts Austin.</p>
-                                                            <div class="btn-group pull-right">
-                                                                <a href="#" class="btn btn-mini">Approve</a>
-                                                                <a href="#" class="btn btn-mini">Invoice</a>
-                                                                <a href="#" class="btn btn-mini btn-danger">Delete</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="media">
-                                                        <a class="pull-left" href="#">
-                                                            <img class="media-object" data-src="js/holder.js/64x64" />
-                                                        </a>
-                                                        <div class="media-body">
-                                                            <h4 class="media-heading"><a href="#">Lorem ipsum </a><small class="helper-font-small">by jane smith on 18 aug 2012, ip 192.168.56.7</small></h4>
-                                                            <p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid.</p>
-                                                            <div class="btn-group pull-right">
-                                                                <a href="#" class="btn btn-mini">Approve</a>
-                                                                <a href="#" class="btn btn-mini">Invoice</a>
-                                                                <a href="#" class="btn btn-mini btn-danger">Delete</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="media">
-                                                        <a class="pull-left" href="#">
-                                                            <img class="media-object" data-src="js/holder.js/64x64" />
-                                                        </a>
-                                                        <div class="media-body">
-                                                            <h4 class="media-heading"><a href="#">Lorem ipsum </a><small class="helper-font-small">by john smith on 18 aug 2012, ip 192.168.56.7</small></h4>
-                                                            <p>Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade.</p>
-                                                            <div class="btn-group pull-right">
-                                                                <a href="#" class="btn btn-mini">Approve</a>
-                                                                <a href="#" class="btn btn-mini">Invoice</a>
-                                                                <a href="#" class="btn btn-mini btn-danger">Delete</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="btn btn-small btn-link pull-right">View all &rarr;</a>
-                                                </div>
-                                                <div class="tab-pane fade" id="recent-posts">
-                                                    <div class="media">
-                                                        <a class="pull-left" href="#">
-                                                            <img class="media-object" data-src="js/holder.js/64x64" />
-                                                        </a>
-                                                        <div class="media-body">
-                                                            <h4 class="media-heading"><a href="#">Tortor dapibus </a><small class="helper-font-small">by jane smith on 11 aug 2012, ip 192.168.56.7</small></h4>
-                                                            <p>Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade.</p>
-                                                            <div class="btn-group pull-right">
-                                                                <a href="#" class="btn btn-mini">Edit</a>
-                                                                <a href="#" class="btn btn-mini">Draft</a>
-                                                                <a href="#" class="btn btn-mini btn-danger">Delete</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="media">
-                                                        <a class="pull-left" href="#">
-                                                            <img class="media-object" data-src="js/holder.js/64x64" />
-                                                        </a>
-                                                        <div class="media-body">
-                                                            <h4 class="media-heading"><a href="#">Tortor dapibus </a><small class="helper-font-small">by john doe on 10 aug 2012, ip 192.168.56.7</small></h4>
-                                                            <p>Vegan fanny pack odio cillum wes anderson 8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel.</p>
-                                                            <div class="btn-group pull-right">
-                                                                <a href="#" class="btn btn-mini">Edit</a>
-                                                                <a href="#" class="btn btn-mini">Draft</a>
-                                                                <a href="#" class="btn btn-mini btn-danger">Delete</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="media">
-                                                        <a class="pull-left" href="#">
-                                                            <img class="media-object" data-src="js/holder.js/64x64" />
-                                                        </a>
-                                                        <div class="media-body">
-                                                            <h4 class="media-heading"><a href="#">Tortor dapibus </a><small class="helper-font-small">by jane doe on 9 aug 2012, ip 192.168.56.7</small></h4>
-                                                            <p>Messenger bag gentrify pitchfork tattooed craft beer, iphone skateboard locavore carles etsy salvia banksy hoodie helvetica. DIY synth PBR banksy irony. Leggings gentrify squid 8-bit cred pitchfork.</p>
-                                                            <div class="btn-group pull-right">
-                                                                <a href="#" class="btn btn-mini">Edit</a>
-                                                                <a href="#" class="btn btn-mini">Draft</a>
-                                                                <a href="#" class="btn btn-mini btn-danger">Delete</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="btn btn-small btn-link pull-right">View all &rarr;</a>
-                                                </div>
-                                                <div class="tab-pane fade" id="recent-comments">
-                                                    <div class="media">
-                                                        <a class="pull-left" href="#">
-                                                            <img class="media-object" data-src="js/holder.js/64x64" />
-                                                        </a>
-                                                        <div class="media-body">
-                                                            <h4 class="media-heading"><a href="#">Lacinia non </a><small class="helper-font-small">by jane smith on 20 aug 2012, ip 192.168.56.7</small></h4>
-                                                            <p>Raw denim you probably haven't heard of them jean shorts Austin.</p>
-                                                            <div class="btn-group pull-right">
-                                                                <a href="#" class="btn btn-mini">Approve</a>
-                                                                <a href="#" class="btn btn-mini">Spam</a>
-                                                                <a href="#" class="btn btn-mini btn-danger">Delete</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="media">
-                                                        <a class="pull-left" href="#">
-                                                            <img class="media-object" data-src="js/holder.js/64x64" />
-                                                        </a>
-                                                        <div class="media-body">
-                                                            <h4 class="media-heading"><a href="#">Lacinia non </a><small class="helper-font-small">by john smith on 19 aug 2012, ip 192.168.56.7</small></h4>
-                                                            <p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid.</p>
-                                                            <div class="btn-group pull-right">
-                                                                <a href="#" class="btn btn-mini">Approve</a>
-                                                                <a href="#" class="btn btn-mini">Spam</a>
-                                                                <a href="#" class="btn btn-mini btn-danger">Delete</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="media">
-                                                        <a class="pull-left" href="#">
-                                                            <img class="media-object" data-src="js/holder.js/64x64" />
-                                                        </a>
-                                                        <div class="media-body">
-                                                            <h4 class="media-heading"><a href="#">Lacinia non </a><small class="helper-font-small">by john doe on 17 aug 2012, ip 192.168.56.7</small></h4>
-                                                            <p>Messenger bag gentrify pitchfork tattooed craft beer, iphone skateboard locavore carles etsy salvia banksy hoodie helvetica. DIY synth PBR banksy irony. Leggings gentrify squid 8-bit cred pitchfork.</p>
-                                                            <div class="btn-group pull-right">
-                                                                <a href="#" class="btn btn-mini">Approve</a>
-                                                                <a href="#" class="btn btn-mini">Spam</a>
-                                                                <a href="#" class="btn btn-mini btn-danger">Delete</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="btn btn-small btn-link pull-right">View all &rarr;</a>
-                                                </div>
-                                            </div><!--/widgets-tab-body-->
-                                        </div><!--/box-body-->
-                                    </div><!--/box-tab-->
-                                </div><!-- tab resume update -->
-                                <div class="span6">
-                                    <div class="box corner-all">
-                                        <div class="box-header corner-top grd-white">
-                                            <div class="header-control">
-                                                <a data-box="collapse"><i class="icofont-caret-up"></i></a>
-                                                <a data-box="close" data-hide="rotateOutDownRight">&times;</a>
-                                            </div>
-                                            <span><i class="icofont-envelope"></i> Quick Mail</span>
-                                        </div>
-                                        <div class="box-body">
-                                            <form />
-                                                <div class="control-group">
-                                                    <label class="control-label">To</label>
-                                                    <div class="controls">
-                                                        <input type="hidden" class="input-block-level" name="reseiver" value="johndoe@mail.com, janedoe@mail.com, johnsmith@mail.com, janesmith@mail.com" />
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label">Subject</label>
-                                                    <div class="controls">
-                                                        <input type="text" class="input-block-level grd-white" name="subject" />
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label">Message</label>
-                                                    <div class="controls">
-                                                        <textarea name="message" data-form="wysihtml5" rows="6" class="span11"></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="form-actions">
-                                                    <input type="reset" class="btn" value="Reset" />
-                                                    <input type="submit" class="btn btn-primary" value="Submit" />
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div><!-- tab stat -->
 
                             
                             <!--/dashboar-->
@@ -356,6 +159,7 @@
                 </div><!-- /span content -->
                 
 
+            </div>
             </div>
         </section>
     {% endblock %}

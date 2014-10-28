@@ -27,8 +27,8 @@ def login_form(request):
             form = forms.LoginForm(request.POST)
             login(request, user)
             # Redirect to a success page.
-            return render_to_response("index.html", {'user': user})
-            #return HttpResponseRedirect("/")
+            #return render_to_response("index.html", {'user': user})
+            return HttpResponseRedirect("/")
         else:
             form = forms.LoginForm()
             # Return an error message.
@@ -42,16 +42,14 @@ def login_form(request):
 def index(request):
     user = request.user
     propertyCount = Property.objects.filter(p_manager=user).count()
-    print(Property.objects.filter(p_manager=user))
     tenantCount = TenantInfo.objects.filter(t_manager=user).count()
     billToPayCount = 0
-    bill_list = RentalBill.objects.listWithPropertyWithDuedate(addMonth.datetime_offset_by_month(date.today(), -1), date.today())
-    print(addMonth.datetime_offset_by_month(date.today(), -1))
-    print(date.today())
+    #bill_list = RentalBill.objects.toPayListOfManger(pay=0, userId=user.id, startdate=addMonth.datetime_offset_by_month(date.today(), -1), enddate=date.today())
+    bill_list = RentalBill.objects.toPayListOfManger(pay=0, userId=user.id)
     if bill_list:
         billToPayCount = len(list(bill_list))
-    print("******propertyCount: %d ******tenantCount: %d ******billToPayCount %d", propertyCount, tenantCount, billToPayCount)
-    return render_to_response("index.html", {'user': user}, context_instance=RequestContext(request))
+    #print(propertyCount, tenantCount, billToPayCount)
+    return render_to_response("index.html", {'user': user, 'propertyCount': propertyCount, 'tenantCount': tenantCount, 'billToPayCount': billToPayCount}, context_instance=RequestContext(request))
 
 
 
@@ -80,8 +78,9 @@ def property_list(rq):
 
 
 @login_required
-def rentalBill_list(rq):
+def propertyRentalBillList(rq):
     user = rq.user
+
     propertyid = int(rq.GET.get('propertyid'))
     this_property = Property.objects.get(pk=propertyid)
 
@@ -90,9 +89,6 @@ def rentalBill_list(rq):
 
     return render_to_response("allBill_list.html",
                                   {'title': 'Rental Bill List', 'user': user, 'notPaidBillList': rentalbillList_notpaid, 'paidBillList': rentalbillList_paid}, context_instance=RequestContext(rq))
-    return render_to_response("rentalBill_list.html",
-                                  {'title': 'Rental Bill List', 'user': user, 'rentalbillList_paid': rentalbillList_paid,
-                                   'rentalbillList_notpaid': rentalbillList_notpaid, 'property': this_property}, context_instance=RequestContext(rq))
 
 
 @login_required

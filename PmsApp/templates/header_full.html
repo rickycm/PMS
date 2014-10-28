@@ -14,14 +14,12 @@
                     <div class="span2 pull-right">
                         <!--panel button ext-->
                         <div class="btn-group">
-                          <a class="btn btn-primary" href="#"><i class="glyphicon-user icon-white"></i> User</a>
+                          <a class="btn btn-primary" href="#"><i class="glyphicon-user icon-white"></i> {{ user.username }}</a>
                           <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
                           <ul class="dropdown-menu">
-                            <li><a href="#"><i class="glyphicon-pencil"></i> Edit</a></li>
-                            <li><a href="#"><i class="glyphicon-trash"></i> Delete</a></li>
-                            <li><a href="#"><i class="glyphicon-ban-circle"></i> Ban</a></li>
+                            <li><a href="#"><i class="glyphicon-pencil"></i> Change Password</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="i"></i> Make admin</a></li>
+                            <li><a href="/accounts/logout/"><i class="i"></i> Logout</a></li>
                           </ul>
                         </div>
                     </div>
