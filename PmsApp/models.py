@@ -1,9 +1,21 @@
 # coding:utf8
-from django.db import models
+from django.db import models, connection
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from globals import *
 
+
+class RentalBillManager(models.Manager):
+    def listWithPropertyWithDuedate(self, startdate, enddate):
+        cursor = connection.cursor()
+        cursor.execute("""
+            select bill.*, prop.*
+            from PmsApp_RentalBill as bill left join PmsApp_Property as prop on bill.rb_property_id=prop.id
+            where bill.rb_should_pay_date >= %s and bill.rb_should_pay_date <= %s
+            group by bill.id order by bill.rb_should_pay_date""", [startdate, enddate])
+        list = cursor.fetchone()
+        print(list)
+        return list
 
 
 class ManagerCompany(models.Model):
@@ -163,6 +175,8 @@ class RentalBill(models.Model):
     rb_paid = models.IntegerField(choices=PAID, default=0)
     rb_actionHistory = models.ForeignKey(ActionHistory, blank=True, null=True)
     rb_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Add Date')
+
+    objects = RentalBillManager()
 
 
 class MaintenanceBill(models.Model):

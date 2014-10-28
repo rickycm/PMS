@@ -41,7 +41,18 @@ def login_form(request):
 @login_required
 def index(request):
     user = request.user
+    propertyCount = Property.objects.filter(p_manager=user).count()
+    print(Property.objects.filter(p_manager=user))
+    tenantCount = TenantInfo.objects.filter(t_manager=user).count()
+    billToPayCount = 0
+    bill_list = RentalBill.objects.listWithPropertyWithDuedate(addMonth.datetime_offset_by_month(date.today(), -1), date.today())
+    print(addMonth.datetime_offset_by_month(date.today(), -1))
+    print(date.today())
+    if bill_list:
+        billToPayCount = len(list(bill_list))
+    print("******propertyCount: %d ******tenantCount: %d ******billToPayCount %d", propertyCount, tenantCount, billToPayCount)
     return render_to_response("index.html", {'user': user}, context_instance=RequestContext(request))
+
 
 
 def logout_view(request):
@@ -546,8 +557,7 @@ def deleteProperty(rq):
         bl.rb_paid = -1
         bl.save()
 
-    return render_to_response("tenantList.html",
-                                  {'title': 'Tenant List', 'user': user, 'tenantlist': tenantlist}, context_instance=RequestContext(rq))
+    return HttpResponseRedirect('/property/list/')
 
 
 '''

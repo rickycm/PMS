@@ -10,7 +10,7 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'PMS.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
-    (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_PATH}),
+    (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', views.index),

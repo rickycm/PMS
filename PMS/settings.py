@@ -95,7 +95,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
-STATIC_PATH = os.path.join(os.path.dirname(__file__), '../static').replace('\\', '/')
+STATIC_ROOT = os.path.join(os.path.dirname(__file__), '../static').replace('\\', '/')
 
 '''
 SOUTH_MIGRATION_MODULES = {
