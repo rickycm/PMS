@@ -52,31 +52,46 @@ class UserAdmin(UserAdmin):
 
 
 class PropertyAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('p_name', 'p_type', 'p_owner', 'p_manager', 'p_rent_circle', 'p_status')
+    search_fields = ('p_name', 'p_owner')
+    list_filter = ('p_name', 'p_status')
+    ordering = ('-p_add_date',)
 
 admin.site.register(Property, PropertyAdmin)
 
 
 class PropertyPriceAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('pp_price_name', 'pp_property', 'pp_rent_circle', 'pp_price', 'pp_currency')
+    search_fields = ('pp_price_name', 'pp_property')
+    list_filter = ('pp_property', 'pp_rent_circle')
+    ordering = ('-pp_add_date',)
 
 admin.site.register(PropertyPrice, PropertyPriceAdmin)
 
 
 class TenantInfoAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('t_name', 't_tpye', 't_phone', 't_email', 't_manager', 't_status')
+    search_fields = ('t_name', 't_phone', 't_email', 't_manager')
+    list_filter = ('t_tpye', 't_manager', 't_status')
+    ordering = ('-t_date',)
 
 admin.site.register(TenantInfo, TenantInfoAdmin)
 
 
 class RentalBillAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('rb_property', 'rb_period_start', 'rb_period_end', 'rb_should_pay_date', 'rb_actual_pay_date', 'rb_type', 'rb_tenant', 'rb_paid')
+    search_fields = ('rb_property', 'rb_should_pay_date', 'rb_tenant')
+    list_filter = ('rb_property', 'rb_tenant', 'rb_paid')
+    ordering = ('-rb_paid', '-rb_should_pay_date')
 
 admin.site.register(RentalBill, RentalBillAdmin)
 
 
 class MaintenanceBillAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('mb_property', 'mb_billdate', 'mb_should_pay_date', 'mb_billtype', 'mb_paid')
+    search_fields = ('mb_property', 'mb_billdate', 'mb_billtype')
+    list_filter = ('mb_property', 'mb_billtype', 'mb_paid')
+    ordering = ('-mb_paid', '-mb_should_pay_date')
 
 admin.site.register(MaintenanceBill, MaintenanceBillAdmin)
 

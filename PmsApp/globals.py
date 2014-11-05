@@ -11,5 +11,6 @@ ACTION = [(1, u'Check-in'), (2, u'Check-out'), (3, u'Pay Rental Bill'), (4, u'Ri
 GENDER_CHOICE = [(u'M', u'Male'), (u'F', u'Female')]
 PAID = [(0, u'Not Paid'), (1, u'Paid'), (-1, u'Deleted')]
 STATUS = [(0, u'Invalid'), (1, u'Normal'), (-1, u'Deleted')]
+TENANTSTATUS = [(0, u'Deactive'), (1, u'Active'), (-1, u'Deleted')]
 
 

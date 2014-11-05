@@ -77,13 +77,13 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 class TenantInfo(models.Model):
     t_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Tenant Name')
-    t_tpye = models.IntegerField(choices=PERSON_TYPE, default=1)
-    t_phone = models.CharField(max_length=20, blank=True, null=True)
-    t_address = models.CharField(max_length=20, blank=True, null=True)
-    t_email = models.EmailField(max_length=1000, verbose_name=u'E-mail', blank=True, null=True)
+    t_tpye = models.IntegerField(choices=PERSON_TYPE, default=1, verbose_name=u'Type')
+    t_phone = models.CharField(max_length=20, blank=True, null=True , verbose_name=u'Phone')
+    t_address = models.CharField(max_length=20, blank=True, null=True, verbose_name=u'Address')
+    t_email = models.EmailField(max_length=1000, blank=True, null=True, verbose_name=u'E-mail')
     t_date = models.DateTimeField(blank=True, null=True, verbose_name=u'Add Date')
-    t_manager = models.ForeignKey(User, related_name=u'manager')
-    t_status = models.IntegerField(default=1)
+    t_manager = models.ForeignKey(User, related_name=u'Manager', verbose_name=u'Manager')
+    t_status = models.IntegerField(choices=TENANTSTATUS, default=1, verbose_name=u'Status')
 
     def __unicode__(self):
         return self.t_name
@@ -196,7 +196,7 @@ class RentalBill(models.Model):
     rb_tenant = models.ForeignKey(TenantInfo, verbose_name=u'Tenant')
     rb_payer_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Payer name')
     rb_note = models.CharField(max_length=2000, blank=True, null=True, verbose_name=u'Note')
-    rb_paid = models.IntegerField(choices=PAID, default=0)
+    rb_paid = models.IntegerField(choices=PAID, default=0, verbose_name=u'Status')
     rb_actionHistory = models.ForeignKey(ActionHistory, blank=True, null=True)
     rb_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Add Date')
 
@@ -216,3 +216,4 @@ class MaintenanceBill(models.Model):
     mb_note = models.CharField(max_length=2000, blank=True, null=True)
     mb_actionHistory = models.ForeignKey(ActionHistory, blank=True, null=True)
     mb_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Add Date')
+    mb_paid = models.IntegerField(choices=PAID, default=0, verbose_name=u'Status')
