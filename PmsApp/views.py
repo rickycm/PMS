@@ -3,7 +3,7 @@ import logging, json
 from datetime import datetime, time, date, timedelta
 
 from django.utils import timezone
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.contrib.auth import authenticate, login, logout
 from django.template import RequestContext
@@ -517,6 +517,25 @@ def tenantForm(rq):
         else:
             logger.debug(u'Add Tenant Failed.')
             return render_to_response('tenantForm.html', {'title': u'Tenant Form', 'form': form}, context_instance=RequestContext(rq))
+
+
+@login_required
+@csrf_protect
+def tenantFormEdit(rq):
+    user = rq.user
+    backurl = rq.get_full_path()
+    tenantIdStr = rq.GET.get('tenantId')
+
+    tenant = get_object_or_404(TenantInfo, pk=int(TODO))
+
+    if rq.method == 'POST':
+        form = forms.TenantForm(rq.POST, instance = tenant)
+        if form.is_valid():
+            tenant = form.save()
+
+            return HttpResponseRedirect('/tenantList')
+
+    return render_to_response('tenantForm.html', {'title': u'Tenant Form', 'form': forms.TenantForm(instance = tenant)}, context_instance=RequestContext(rq))
 
 
 @login_required
