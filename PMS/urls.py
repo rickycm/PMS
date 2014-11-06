@@ -30,6 +30,7 @@ urlpatterns = patterns('',
     (r'^tenantList/$', views.tenantList),
     (r'^propertyForm/$', views.propertyForm),
     (r'^tenantForm/$', views.tenantForm),
+    (r'^tenantFormEdit/$', views.tenantFormEdit),
     (r'^deleteProperty/$', views.deleteProperty),
 
     #(r'^accounts/', include('userena.urls')),
