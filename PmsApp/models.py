@@ -112,7 +112,7 @@ class ManagerInfo(models.Model):
 class Property(models.Model):
     p_name = models.CharField(max_length=200, verbose_name=u'Property Name')
     p_type = models.IntegerField(choices=P_TYPE, default=1, verbose_name=u'Property Type')
-    p_address = models.CharField(max_length=20, blank=True, null=True, verbose_name=u'Address')
+    p_address = models.CharField(max_length=2000, blank=True, null=True, verbose_name=u'Address')
     p_owner = models.ForeignKey(User, related_name=u'owner', verbose_name=u'Owner')
     p_manager = models.ForeignKey(User, related_name=u'Property manager', verbose_name=u'Manager')
     p_tenant = models.ForeignKey(TenantInfo, blank=True, null=True, verbose_name=u'Tenant')

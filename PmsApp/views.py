@@ -10,6 +10,7 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.utils import dateparse
+from django.db.models import Q
 
 from PmsApp import forms, addMonth
 
@@ -41,7 +42,7 @@ def login_form(request):
 @login_required
 def index(request):
     user = request.user
-    propertyCount = Property.objects.filter(p_manager=user).count()
+    propertyCount = Property.objects.filter(Q(p_manager=user), ~Q(p_status=-1)).count()
     tenantCount = TenantInfo.objects.filter(t_manager=user).count()
     billToPayCount = 0
     #bill_list = RentalBill.objects.toPayListOfManger(pay=0, userId=user.id, startdate=addMonth.datetime_offset_by_month(date.today(), -1), enddate=date.today())
@@ -70,7 +71,7 @@ def property_list(rq):
         return render_to_response("property_table.html",
                                   {'title': 'Property List', 'user': user, 'properties': properties}, context_instance=RequestContext(rq))
     else:
-        properties = Property.objects.filter(p_manager=user)
+        properties = Property.objects.filter(Q(p_manager=user), ~Q(p_status=-1))
         #print('user' + user.username + 'len(properties) = ' + str(len(properties)))
 
         return render_to_response("property_table.html",
@@ -482,6 +483,25 @@ def propertyForm(rq):
 
 @login_required
 @csrf_protect
+def propertyFormEdit(rq):
+    user = rq.user
+    backurl = rq.get_full_path()
+    propidStr = rq.GET.get('propertyid')
+
+    prop = get_object_or_404(Property, pk=int(propidStr))
+
+    if rq.method == 'POST':
+        form = forms.PropertyForm(rq.POST, instance = prop)
+        if form.is_valid():
+            prop = form.save()
+
+            return HttpResponseRedirect('/property/list')
+
+    return render_to_response('propertyFormEdit.html', {'title': u'Property Form', 'propertyid': propidStr, 'form': forms.PropertyForm(instance = prop)}, context_instance=RequestContext(rq))
+
+
+@login_required
+@csrf_protect
 def tenantForm(rq):
     user = rq.user
     backurl = rq.get_full_path()
@@ -526,7 +546,7 @@ def tenantFormEdit(rq):
     backurl = rq.get_full_path()
     tenantIdStr = rq.GET.get('tenantId')
 
-    tenant = get_object_or_404(TenantInfo, pk=int(TODO))
+    tenant = get_object_or_404(TenantInfo, pk=int(tenantIdStr))
 
     if rq.method == 'POST':
         form = forms.TenantForm(rq.POST, instance = tenant)
@@ -535,7 +555,7 @@ def tenantFormEdit(rq):
 
             return HttpResponseRedirect('/tenantList')
 
-    return render_to_response('tenantForm.html', {'title': u'Tenant Form', 'form': forms.TenantForm(instance = tenant)}, context_instance=RequestContext(rq))
+    return render_to_response('tenantFormEdit.html', {'title': u'Tenant Form', 'tenantId': tenantIdStr, 'form': forms.TenantForm(instance = tenant)}, context_instance=RequestContext(rq))
 
 
 @login_required
