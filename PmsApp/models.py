@@ -76,10 +76,10 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 
 class TenantInfo(models.Model):
-    t_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Tenant Name')
+    t_name = models.CharField(max_length=200, verbose_name=u'Tenant Name')
     t_tpye = models.IntegerField(choices=PERSON_TYPE, default=1, verbose_name=u'Type')
     t_phone = models.CharField(max_length=20, blank=True, null=True , verbose_name=u'Phone')
-    t_address = models.CharField(max_length=20, blank=True, null=True, verbose_name=u'Address')
+    t_address = models.CharField(max_length=2000, blank=True, null=True, verbose_name=u'Address')
     t_email = models.EmailField(max_length=1000, blank=True, null=True, verbose_name=u'E-mail')
     t_date = models.DateTimeField(blank=True, null=True, verbose_name=u'Add Date')
     t_manager = models.ForeignKey(User, related_name=u'Manager', verbose_name=u'Manager')
@@ -125,6 +125,7 @@ class Property(models.Model):
     p_last_checkinHis = models.IntegerField(blank=True, null=True)
     p_last_checkoutHis = models.IntegerField(blank=True, null=True)
     p_billsNotPaid = models.IntegerField(blank=True, null=True)
+    p_note = models.TextField(blank=True, null=True)
 
     class Meta:
         verbose_name = u'Property'
@@ -137,6 +138,13 @@ class Property(models.Model):
     def __str__(self):
         return self.id
 '''
+
+
+class PropertyPhoto(models.Model):
+    photofile = models.FileField(upload_to='photos/%Y%M')
+    propertyid = models.IntegerField()
+    uploadtime = models.DateTimeField(blank=True, null=True, auto_now_add=True)
+
 
 class PropertyPrice(models.Model):
     pp_property = models.ForeignKey(Property, verbose_name=u'Property')

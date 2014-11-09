@@ -1,3 +1,5 @@
+pip install django-phonenumber-field
+
 /Users/ricky/env/python2.7/lib/python2.7/site-packages/bootstrap_admin/templates/admin/edit_inline/stacked.html
 
 
@@ -64,3 +66,6 @@ http://blog.sina.com.cn/s/blog_8019dfa70100u60n.html
 Celery
 http://my.oschina.net/kinegratii/blog/292395
 http://simple-is-better.com/news/466
+
+***********
+http://koensblog.eu/blog/7/multiple-file-upload-django

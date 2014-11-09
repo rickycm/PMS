@@ -1,7 +1,8 @@
 __author__ = 'ricky'
 import datetime
 
-P_TYPE = [(1, u'Apartment'), (2, u'House'), (3, u'Villa'), (4, u'Room')]
+P_TYPE = [(1, u'Apartment'), (2, u'House'), (3, u'Villa'), (4, u'Room'), (5, u'Studio'), (6, u'Master Bedroom'),
+    (7, u'Junior Master Bedroom'), (8, u'Common Room with Private Access'), (9, u'Common Room')]
 P_STATUS = [(1, u'Free to rent'), (2, u'Rented'), (3, u'On Maintenance'), (-1, u'Deleted')]
 PERSON_TYPE = [(1, u'Person'), (2, u'Company'), (3, u'Family')]
 RENTAL_TYPE = [(1, u'Monthly'), (2, u'Quarterly'), (3, u'Yearly'), (4, u'Daily')]

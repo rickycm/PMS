@@ -459,7 +459,8 @@ def propertyForm(rq):
                 owner = User.objects.get(pk=int(form.data['p_owner']))
             except:
                 print(int(form.data['p_owner']))
-                #owner = User.objects.get(pk=1)
+                owner = User.objects.get(pk=0)
+
             new_property = Property.objects.create(
                 p_name = form.data['p_name'],
                 p_type = int(form.data['p_type']),
@@ -473,6 +474,12 @@ def propertyForm(rq):
                 p_billsNotPaid = 0,
             )
             new_property.save()
+
+            file_list = rq.FILES.getlist('files')
+            for afile in file_list:
+                print(afile.name)
+                print(afile.url)
+
             msg = u'Add Property Success!'
             #return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))
             return render_to_response('propertyDetail.html', {'title': u'Property Detail', 'property': new_property}, context_instance=RequestContext(rq))
@@ -561,7 +568,7 @@ def tenantFormEdit(rq):
 @login_required
 def tenantList(rq):
     user = rq.user
-    tenantlist = TenantInfo.objects.filter(t_manager=user)
+    tenantlist = TenantInfo.objects.filter(Q(t_manager=user), ~Q(t_status=-1))
 
     return render_to_response("tenantList.html",
                                   {'title': 'Tenant List', 'user': user, 'tenantlist': tenantlist}, context_instance=RequestContext(rq))
