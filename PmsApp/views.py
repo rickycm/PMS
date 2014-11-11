@@ -1,4 +1,8 @@
 #coding=utf-8
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 import logging, json
 import hashlib
 from datetime import datetime, time, date, timedelta

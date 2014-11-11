@@ -1,6 +1,8 @@
 #coding=utf-8
 __author__ = 'ricky'
-
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 from django import forms
 from django.contrib.auth.models import User
 from globals import *
@@ -53,7 +55,7 @@ class MultiFileField(forms.FileField):
         elif self.max_num and  num_files > self.max_num:
             raise forms.ValidationError(self.error_messages['max_num'] % {'max_num': self.max_num, 'num_files': num_files})
         for uploaded_file in data:
-            if uploaded_file.size > self.maximum_file_size:
+            if uploaded_file is not None and uploaded_file.size > self.maximum_file_size:
                 raise forms.ValidationError(self.error_messages['file_size'] % { 'uploaded_file_name': uploaded_file.name})
 
 
@@ -146,8 +148,7 @@ class PropertyForm(forms.ModelForm):
     def clean_photos(self):
         photos = self.cleaned_data['photos']
         for photo in photos:
-            print(photo.name.lower())
-            if not photo.name.lower().endswith('.png') and not photo.name.lower().endswith('.jpg') and not photo.name.lower().endswith('.jpeg'):
+            if photo is not None and not photo.name.lower().endswith('.png') and not photo.name.lower().endswith('.jpg') and not photo.name.lower().endswith('.jpeg'):
                 raise forms.ValidationError('png/jpg/jpeg only')
         return photos
 
