@@ -78,6 +78,10 @@ def create_user_profile(sender, instance, created, **kwargs):
 class TenantInfo(models.Model):
     t_name = models.CharField(max_length=200, verbose_name=u'Tenant Name')
     t_tpye = models.IntegerField(choices=PERSON_TYPE, default=1, verbose_name=u'Type')
+    t_gender = models.CharField(choices=GENDER_CHOICE, default=u'M', verbose_name=u'Gender')
+    t_nationality = models.CharField(max_length=100, blank=True, null=True , verbose_name=u'Nationality')
+    t_ethnic = models.CharField(max_length=100, blank=True, null=True , verbose_name=u'Ethnic')
+    t_profession = models.CharField(max_length=100, blank=True, null=True , verbose_name=u'Profession')
     t_phone = models.CharField(max_length=20, blank=True, null=True , verbose_name=u'Phone')
     t_address = models.CharField(max_length=2000, blank=True, null=True, verbose_name=u'Address')
     t_email = models.EmailField(max_length=1000, blank=True, null=True, verbose_name=u'E-mail')

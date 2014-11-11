@@ -160,7 +160,7 @@ class TenantForm(forms.ModelForm):
 
     class Meta:
         model = TenantInfo
-        fields = ('t_name', 't_tpye', 't_phone', 't_address', 't_email')
+        fields = ('t_name', 't_tpye', 't_gender', 't_nationality', 't_ethnic', 't_profession', 't_phone', 't_address', 't_email')
 
     def clean(self):
         cleaned_data = super(TenantForm, self).clean()

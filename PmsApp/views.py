@@ -14,7 +14,7 @@ from django.utils import dateparse
 from django.db.models import Q
 
 from StringIO import StringIO
-from PIL import Image
+from PIL import Image, ImageFile
 
 from PmsApp import forms, addMonth
 
@@ -400,8 +400,6 @@ def propertyDetail(rq):
             try:
                 this_property = Property.objects.get(pk=propid)
                 photo_list = PropertyPhoto.objects.filter(propertyid=propid)
-                print(len(photo_list))
-                print(photo_list)
                 if this_property.p_status == 1:
                     if this_property.p_last_checkoutHis:
                         checkInOuthis = ActionHistory.objects.get(pk=this_property.p_last_checkoutHis)
@@ -445,31 +443,28 @@ def propertyDetail(rq):
 
 
 def handle_uploaded_image(i):
+    import os
+    from django.core.files import File
     # resize image
     imagefile  = StringIO(i.read())
     imageImage = Image.open(imagefile)
 
-    #(width, height) = imageImage.size
-    #(width, height) = scale_dimensions(width, height, longest_side=700)
+    (width, height) = imageImage.size
+    (width, height) = scale_dimensions(width, height, longest_side=500)
 
-    resizedImage = imageImage.resize((700, 500))
+    resizedImage = imageImage.resize((width, height))
 
     imagefile = StringIO()
     resizedImage.save(imagefile,'JPEG')
-
-    return resizedImage
-    '''
     filename = hashlib.md5(imagefile.getvalue()).hexdigest()+'.jpg'
 
     # #save to disk
-    imagefile = open(os.path.join('/tmp',filename), 'w')
-    resizedImage.save(imagefile,'JPEG')
-    imagefile = open(os.path.join('/tmp',filename), 'r')
-    content = django.core.files.File(imagefile)
-
-    my_object = MyDjangoObject()
-    my_object.photo.save(filename, content)
-    '''
+    imagefile = open(os.path.join('/Users/ricky/PycharmProjects/PMS/PMS/media',filename), 'w')
+    resizedImage.save(imagefile,'JPEG', quality=90)
+    imagefile = open(os.path.join('/Users/ricky/PycharmProjects/PMS/PMS/media',filename), 'r')
+    content = File(imagefile)
+    print(filename)
+    return (filename, content)
 
 
 def scale_dimensions(width, height, longest_side):
@@ -477,9 +472,9 @@ def scale_dimensions(width, height, longest_side):
         if width > longest_side:
             ratio = longest_side*1./width
             return (int(width*ratio), int(height*ratio))
-        elif height > longest_side:
-            ratio = longest_side*1./height
-            return (int(width*ratio), int(height*ratio))
+    elif height > longest_side:
+        ratio = longest_side*1./height
+        return (int(width*ratio), int(height*ratio))
     return (width, height)
 
 
@@ -529,11 +524,13 @@ def propertyForm(rq):
             for afile in file_list:
 
                 photofile = PropertyPhoto()
-                photofile.photofile = handle_uploaded_image(afile)
+                #handle_uploaded_image(afile)
+                photofile.photofile = afile
                 photofile.propertyid = new_property.id
                 photofile.save()
                 print(afile.name)
                 print(photofile.photofile.url)
+
 
 
             msg = u'Add Property Success!'
@@ -557,6 +554,15 @@ def propertyFormEdit(rq):
         form = forms.PropertyForm(rq.POST, instance = prop)
         if form.is_valid():
             prop = form.save()
+
+            file_list = rq.FILES.getlist('photos')
+            for afile in file_list:
+
+                photofile = PropertyPhoto()
+                #handle_uploaded_image(afile)
+                photofile.photofile = afile
+                photofile.propertyid = prop.id
+                photofile.save()
 
             return HttpResponseRedirect('/property/list')
 
