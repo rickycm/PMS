@@ -1,5 +1,6 @@
 #coding=utf-8
 from django.conf.urls import patterns, include, url
+from django.conf.urls.static import static
 from PmsApp import views
 from PMS import settings
 
@@ -40,4 +41,4 @@ urlpatterns = patterns('',
     #(r'^property/$', views.PropertyList.as_view()),
     #(r'^patients/(?P<pk>[0-9]+)/$', views.PatientDetail.as_view()),
     #url(r'^datetime/$', views.datetime),  # test
-)
+)+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

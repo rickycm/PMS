@@ -9,6 +9,30 @@
         <link href="/static/css/datetimepicker.css" rel="stylesheet" media="screen">
         <link href="/static/css/datepicker.css" rel="stylesheet" media="screen">
 
+          <!-- Demo CSS -->
+            <link rel="stylesheet" href="/static/css/flexslider.css" type="text/css" media="screen" />
+          <style>
+            #main {
+              margin-left: 260px;
+              margin-right: 260px;
+            }
+            #container {
+              padding: 10px 40px 0px;
+            }
+            .slides{
+                overflow:hidden;
+                max-width:auto;
+                max-height:500px;
+            }
+            .slides li img{
+                width:auto;
+                height:auto;
+            }
+          </style>
+            <!-- Modernizr -->
+          <script src="/static/js/modernizr.js"></script>
+
+
 
         {{ form.media }}
     {% endblock %}
@@ -95,6 +119,25 @@
 
                         <!-- content-body -->
                         <div class="content-body">
+                        {% if photoList %}
+                        <!-- slider -->
+                              <div id="container" class="cf">
+                                <div id="main" role="main">
+                                  <section class="slider">
+                                    <div class="flexslider">
+                                      <ul class="slides">
+                                          {% for photo in photoList %}
+                                            <li>
+                                            <img src="{{ photo.photofile.url }}" />
+                                            </li>
+                                          {% endfor %}
+                                      </ul>
+                                    </div>
+                                  </section>
+                                </div>
+                              </div>
+                        <!-- slider -->
+                        {% endif %}
                             <!-- grids -->
                             <!-- span12-->
                             <div class="row-fluid">
@@ -210,6 +253,35 @@
     {% block footerjs %}
         {{ block.super }}
         <script type="text/javascript" src="/static/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+
+            <!-- FlexSlider -->
+          <script defer src="/static/flexsliderjs/jquery.flexslider.js"></script>
+
+          <script type="text/javascript">
+            $(function(){
+              SyntaxHighlighter.all();
+            });
+            $(window).load(function(){
+              $('.flexslider').flexslider({
+                animation: "slide",
+                start: function(slider){
+                  $('body').removeClass('loading');
+                }
+              });
+            });
+          </script>
+
+
+          <!-- Syntax Highlighter -->
+          <script type="text/javascript" src="/static/flexsliderjs/shCore.js"></script>
+          <script type="text/javascript" src="/static/flexsliderjs/shBrushXml.js"></script>
+          <script type="text/javascript" src="/static/flexsliderjs/shBrushJScript.js"></script>
+
+          <!-- Optional FlexSlider Additions -->
+          <script src="/static/flexsliderjs/jquery.easing.js"></script>
+          <script src="/static/flexsliderjs/jquery.mousewheel.js"></script>
+          <script defer src="/static/flexsliderjs/demo.js"></script>
+
 
         <script type="text/javascript">
 

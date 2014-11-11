@@ -1,5 +1,6 @@
 #coding=utf-8
 import logging, json
+import hashlib
 from datetime import datetime, time, date, timedelta
 
 from django.utils import timezone
@@ -11,6 +12,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.utils import dateparse
 from django.db.models import Q
+
+from StringIO import StringIO
+from PIL import Image
 
 from PmsApp import forms, addMonth
 
@@ -395,6 +399,9 @@ def propertyDetail(rq):
         if propid != None:
             try:
                 this_property = Property.objects.get(pk=propid)
+                photo_list = PropertyPhoto.objects.filter(propertyid=propid)
+                print(len(photo_list))
+                print(photo_list)
                 if this_property.p_status == 1:
                     if this_property.p_last_checkoutHis:
                         checkInOuthis = ActionHistory.objects.get(pk=this_property.p_last_checkoutHis)
@@ -416,21 +423,64 @@ def propertyDetail(rq):
                         priceStr = ''
                         tenant = None
                 else:
-                    pass
+                    checkInOuthis = None
+                    priceStr = ''
+                    tenant = None
 
             except Property.DoesNotExist:
                 title = u'Error'
                 errorMessage = u'Oops! Property Does not Exist!'
                 return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
                                       context_instance=RequestContext(rq))
+
+
             return render_to_response('propertyDetail.html', {'title': u'Property Detail', 'property': this_property, 'checkInOuthis': checkInOuthis,
-                                                              'priceStr': priceStr, 'tenant': tenant}, context_instance=RequestContext(rq))
+                                                              'priceStr': priceStr, 'tenant': tenant, 'photoList': photo_list}, context_instance=RequestContext(rq))
         else:
             title = u'Error'
             errorMessage = u'Property Does not Exist!'
             backurl = rq.get_full_path()
             return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
                                       context_instance=RequestContext(rq))
+
+
+def handle_uploaded_image(i):
+    # resize image
+    imagefile  = StringIO(i.read())
+    imageImage = Image.open(imagefile)
+
+    #(width, height) = imageImage.size
+    #(width, height) = scale_dimensions(width, height, longest_side=700)
+
+    resizedImage = imageImage.resize((700, 500))
+
+    imagefile = StringIO()
+    resizedImage.save(imagefile,'JPEG')
+
+    return resizedImage
+    '''
+    filename = hashlib.md5(imagefile.getvalue()).hexdigest()+'.jpg'
+
+    # #save to disk
+    imagefile = open(os.path.join('/tmp',filename), 'w')
+    resizedImage.save(imagefile,'JPEG')
+    imagefile = open(os.path.join('/tmp',filename), 'r')
+    content = django.core.files.File(imagefile)
+
+    my_object = MyDjangoObject()
+    my_object.photo.save(filename, content)
+    '''
+
+
+def scale_dimensions(width, height, longest_side):
+    if width > height:
+        if width > longest_side:
+            ratio = longest_side*1./width
+            return (int(width*ratio), int(height*ratio))
+        elif height > longest_side:
+            ratio = longest_side*1./height
+            return (int(width*ratio), int(height*ratio))
+    return (width, height)
 
 
 @login_required
@@ -453,7 +503,7 @@ def propertyForm(rq):
 
         return render_to_response('propertyForm.html', {'title': u'Property Form', 'form': form}, context_instance=RequestContext(rq))
     else:
-        form = forms.PropertyForm(rq.POST)
+        form = forms.PropertyForm(rq.POST, rq.FILES);
         if form.is_valid():
             try:
                 owner = User.objects.get(pk=int(form.data['p_owner']))
@@ -475,10 +525,16 @@ def propertyForm(rq):
             )
             new_property.save()
 
-            file_list = rq.FILES.getlist('files')
+            file_list = rq.FILES.getlist('photos')
             for afile in file_list:
+
+                photofile = PropertyPhoto()
+                photofile.photofile = handle_uploaded_image(afile)
+                photofile.propertyid = new_property.id
+                photofile.save()
                 print(afile.name)
-                print(afile.url)
+                print(photofile.photofile.url)
+
 
             msg = u'Add Property Success!'
             #return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))

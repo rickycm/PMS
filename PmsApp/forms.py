@@ -44,9 +44,7 @@ class MultiFileField(forms.FileField):
         return ret
     def validate(self, data):
         super(MultiFileField, self).validate(data)
-        print(data)
         num_files = len(data)
-        print(num_files)
         if len(data) and not data[0]:
             num_files = 0
         if num_files < self.min_num:
@@ -55,7 +53,6 @@ class MultiFileField(forms.FileField):
         elif self.max_num and  num_files > self.max_num:
             raise forms.ValidationError(self.error_messages['max_num'] % {'max_num': self.max_num, 'num_files': num_files})
         for uploaded_file in data:
-            print(uploaded_file)
             if uploaded_file.size > self.maximum_file_size:
                 raise forms.ValidationError(self.error_messages['file_size'] % { 'uploaded_file_name': uploaded_file.name})
 
@@ -145,6 +142,14 @@ class PropertyForm(forms.ModelForm):
     class Meta:
         model = Property
         fields = ('p_name', 'p_type', 'p_address', 'p_owner', 'p_area', 'p_buildtime', 'p_rent_circle', 'p_status', 'photos')
+
+    def clean_photos(self):
+        photos = self.cleaned_data['photos']
+        for photo in photos:
+            print(photo.name.lower())
+            if not photo.name.lower().endswith('.png') and not photo.name.lower().endswith('.jpg') and not photo.name.lower().endswith('.jpeg'):
+                raise forms.ValidationError('png/jpg/jpeg only')
+        return photos
 
     def clean(self):
         cleaned_data = super(PropertyForm, self).clean()

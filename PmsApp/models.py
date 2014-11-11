@@ -141,7 +141,7 @@ class Property(models.Model):
 
 
 class PropertyPhoto(models.Model):
-    photofile = models.FileField(upload_to='photos/%Y%M')
+    photofile = models.FileField(upload_to='photos/%Y%m')
     propertyid = models.IntegerField()
     uploadtime = models.DateTimeField(blank=True, null=True, auto_now_add=True)
 
