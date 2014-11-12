@@ -168,3 +168,15 @@ class TenantForm(forms.ModelForm):
         phone = cleaned_data.get('t_phone')
 
         return cleaned_data
+
+
+class PropertyPriceForm(forms.ModelForm):
+
+    class Meta:
+        model = PropertyPrice
+        fields = ('pp_property', 'pp_price_name', 'pp_rent_circle', 'pp_price', 'pp_currency')
+
+    def clean(self):
+        cleaned_data = super(PropertyPriceForm, self).clean()
+
+        return cleaned_data

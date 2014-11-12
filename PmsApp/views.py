@@ -574,6 +574,23 @@ def propertyFormEdit(rq):
 
 
 @login_required
+def deleteProperty(rq):
+    user = rq.user
+    propid = int(rq.GET.get('propertyid'))
+    this_property = Property.objects.get(pk=propid)
+    this_property.p_status = -1
+    this_property.p_billsNotPaid = 0
+    this_property.save()
+
+    billList = RentalBill.objects.filter(rb_property=this_property)
+    for bl in billList:
+        bl.rb_paid = -1
+        bl.save()
+
+    return HttpResponseRedirect('/property/list/')
+
+
+@login_required
 @csrf_protect
 def tenantForm(rq):
     user = rq.user
@@ -634,7 +651,11 @@ def tenantFormEdit(rq):
 @login_required
 def tenantList(rq):
     user = rq.user
-    tenantlist = TenantInfo.objects.filter(Q(t_manager=user), ~Q(t_status=-1))
+
+    if user.is_superuser == 1:
+        tenantlist = TenantInfo.objects.all()
+    else:
+        tenantlist = TenantInfo.objects.filter(Q(t_manager=user), ~Q(t_status=-1))
 
     return render_to_response("tenantList.html",
                                   {'title': 'Tenant List', 'user': user, 'tenantlist': tenantlist}, context_instance=RequestContext(rq))
@@ -652,20 +673,85 @@ def deleteTenant(rq):
 
 
 @login_required
-def deleteProperty(rq):
+@csrf_protect
+def priceForm(rq):
     user = rq.user
-    propid = int(rq.GET.get('propertyid'))
-    this_property = Property.objects.get(pk=propid)
-    this_property.p_status = -1
-    this_property.p_billsNotPaid = 0
-    this_property.save()
+    backurl = rq.get_full_path()
 
-    billList = RentalBill.objects.filter(rb_property=this_property)
-    for bl in billList:
-        bl.rb_paid = -1
-        bl.save()
+    if rq.method == 'GET':
+        priceIdStr = rq.GET.get('priceId')
+        if priceIdStr:
+            priceId = int(priceIdStr)
+            try:
+                propertyPrice = PropertyPrice.objects.get(pk=priceId)
+                form = forms.PropertyPriceForm(instance=propertyPrice)
+            except:
+                form = forms.PropertyPriceForm()
+        else:
+            form = forms.PropertyPriceForm()
 
-    return HttpResponseRedirect('/property/list/')
+        return render_to_response('priceForm.html', {'title': u'Property Price Form', 'form': form}, context_instance=RequestContext(rq))
+    else:
+        form = forms.PropertyPriceForm(rq.POST)
+        if form.is_valid():
+            property = get_object_or_404(Property, pk=int(form.data['pp_property']))
+            new_price = PropertyPrice.objects.create(
+                pp_property = property,
+                pp_price_name = form.data['pp_price_name'],
+                pp_rent_circle = form.data['pp_rent_circle'],
+                pp_price = form.data['pp_price'],
+                pp_currency = form.data['pp_currency'],
+                pp_manager = user,
+            )
+            new_price.save()
+            msg = u'Add Price Success!'
+            return HttpResponseRedirect('/priceList')
+            #return render_to_response('propertyDetail.html', {'title': u'Property Detail', 'property': new_property}, context_instance=RequestContext(rq))
+        else:
+            logger.debug(u'Add Price Failed.')
+            return render_to_response('priceForm.html', {'title': u'Property Price Form', 'form': form}, context_instance=RequestContext(rq))
+
+
+@login_required
+@csrf_protect
+def priceFormEdit(rq):
+    user = rq.user
+    backurl = rq.get_full_path()
+    priceIdStr = rq.GET.get('priceId')
+
+    price = get_object_or_404(PropertyPrice, pk=int(priceIdStr))
+
+    if rq.method == 'POST':
+        form = forms.PropertyPriceForm(rq.POST, instance = price)
+        if form.is_valid():
+            price = form.save()
+
+            return HttpResponseRedirect('/priceList')
+
+    return render_to_response('priceForm.html', {'title': u'Property Price Form', 'priceId': priceIdStr, 'form': forms.PropertyPriceForm(instance = price)}, context_instance=RequestContext(rq))
+
+
+@login_required
+def priceList(rq):
+    user = rq.user
+    if user.is_superuser == 1:
+        priceList = PropertyPrice.objects.all()
+
+    else:
+        priceList = PropertyPrice.objects.filter(pp_manager=user)
+
+    return render_to_response("priceList.html",
+                                  {'title': 'Price List', 'user': user, 'priceList': priceList}, context_instance=RequestContext(rq))
+
+
+@login_required
+def deletePrice(rq):
+    user = rq.user
+    priceid = int(rq.GET.get('priceId'))
+    price = PropertyPrice.objects.get(pk=priceid)
+    price.delete()
+
+    return HttpResponseRedirect('/priceList')
 
 
 '''

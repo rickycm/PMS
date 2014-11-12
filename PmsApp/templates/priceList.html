@@ -1,16 +1,10 @@
 {% extends "base.html" %}
-
+{% load tags_extras %}
     {% block pagehead %}
         {{ block.super }}
 
         <link href="/static/css/DT_bootstrap.css" rel="stylesheet" />
         <link href="/static/css/responsive-tables.css" rel="stylesheet" />
-
-        <link href="/static/css/datetimepicker.css" rel="stylesheet" media="screen">
-        <link href="/static/css/datepicker.css" rel="stylesheet" media="screen">
-
-
-        {{ form.media }}
     {% endblock %}
 
     <body>
@@ -28,29 +22,8 @@
                     <div class="content">
                         <!-- content-header -->
                         <div class="content-header">
-                            <ul class="content-header-action pull-right">
-                                <li>
-                                    <a href="#">
-                                        <div class="badge-circle grd-green color-white"><i class="icofont-plus-sign"></i></div>
-                                        <div class="action-text color-green">8765 <span class="helper-font-small color-silver-dark">Visits</span></div>
-                                    </a>
-                                </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <a href="#">
-                                        <div class="badge-circle grd-teal color-white"><i class="icofont-user-md"></i></div>
-                                        <div class="action-text color-teal">1437 <span class="helper-font-small color-silver-dark">Users</span></div>
-                                    </a>
-                                </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <a href="#">
-                                        <div class="badge-circle grd-orange color-white">$</div>
-                                        <div class="action-text color-orange">4367 <span class="helper-font-small color-silver-dark">Orders</span></div>
-                                    </a>
-                                </li>
-                            </ul>
-                            <h2><i class="icofont-table"></i> Property Form</h2>
+
+                            <h2><i class="icofont-table"></i> Price List</h2>
                         </div><!-- /content-header -->
 
                         <!-- content-breadcrumb -->
@@ -60,7 +33,7 @@
                                 <li class="divider"></li>
                                 <li class="btn-group">
                                     <a href="#" class="btn btn-small btn-link">
-                                        <i class="icofont-money"></i> Orders <span class="color-red">(+12)</span>
+                                        <i class="icofont-money"></i> Bills <span class="color-red">(+12)</span>
                                     </a>
                                 </li>
                                 <li class="divider"></li>
@@ -70,26 +43,12 @@
                                     </a>
                                 </li>
                                 <li class="divider"></li>
-                                <li class="btn-group">
-                                    <a href="#" class="btn btn-small btn-link dropdown-toggle" data-toggle="dropdown">
-                                        <i class="icofont-tasks"></i> Tasks
-                                        <i class="icofont-caret-down"></i>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Some Action</a></li>
-                                        <li><a href="#">Other Action</a></li>
-                                        <li class="divider"></li>
-                                        <li><a href="#">Something Else</a></li>
-                                    </ul>
-                                </li>
                             </ul><!--/breadcrumb-nav-->
 
                             <!--breadcrumb-->
                             <ul class="breadcrumb">
                                 <li><a href="/"><i class="icofont-home"></i> Dashboard</a> <span class="divider">&rsaquo;</span></li>
-                                <li><a href="/property/list/"> Property List</a> <span class="divider">&rsaquo;</span></li>
-
-                                <li class="active">Property Form</li>
+                                <li class="active">Price List</li>
                             </ul><!--/breadcrumb-->
                         </div><!-- /content-breadcrumb -->
 
@@ -99,38 +58,45 @@
                             <!--datatables-->
                             <div class="row-fluid">
                                 <div class="span12">
-                                    {% if msg %}
-                                    <div class="alert alert-success">{{ msg }}</div>
-                                    {% endif %}
                                     <div class="box corner-all">
                                         <div class="box-header grd-white corner-top">
-                                            <span id="box-name">Property Form</span>
+                                            <span>Price List</span>
+                                            <span class="pull-right"><a class="btn btn-primary" href="/priceForm">New Price</a></span>
                                         </div>
                                         <div class="box-body">
+                                            <table id="datatables" class="table table-bordered table-striped responsive">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Price Name</th>
+                                                        <th>Circle</th>
+                                                        <th>Price</th>
+                                                        <th>Currency</th>
+                                                        <th>Property</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="listbody">
+                                                    {% for price in priceList %}
+                                                        <tr class="odd gradeX">
+                                                            <td>{{ price.pp_price_name }}</td>
+                                                            <td>{{ price.get_pp_rent_circle_display }}</td>
+                                                            <td>{{ price.pp_price }}</td>
+                                                            <td class="center">{{ price.pp_currency }}</td>
+                                                            <td class="center">{{ price.pp_property }}</td>
+                                                            <td class="center">
+                                                                <a class="btn btn-success btn-small" href="/priceFormEdit/?priceId={{ price.id }} "><i class="icon-check"></i> Edit</a>
+                                                                <a class="btn btn-danger btn-small" href="/deletePrice/?priceId={{ price.id }} "><i class="icon-remove"></i> Delete</a>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
 
-                                            {% if form.errors %}
-                                                <p style="color: red;">
-                                                    {# pulralize 是filter，用来判断是否为添加's'来表示单词的复数形式#}
-                                                    Please correct the error{{ form.errors|pluralize }} below.
-                                                </p>
-                                            {% endif %}
-
-                                            <form action="" method="post" enctype="multipart/form-data" >
-                                                <table>
-                                                    {# 可以使用as_table，as_ul, as_p来改变格式 #}
-                                                    {{ form.as_table }}
-                                                </table>
-                                                {% csrf_token %}
-                                                <div class="form-group">
-                                                    <input type="submit" value="Submit" class="btn btn-primary"/>
-                                                </div>
-                                            </form>
+                                                </tbody>
+                                            </table>
 
                                         </div><!-- /box-body -->
                                     </div><!-- /box -->
                                 </div><!-- /span -->
                             </div><!--/datatables-->
-
 
                             <!--/tables-->
                         </div><!--/content-body -->
@@ -147,17 +113,28 @@
 
     {% block footerjs %}
         {{ block.super }}
-        <script type="text/javascript" src="/static/js/datepicker/bootstrap-datepicker.js" charset="UTF-8"></script>
+
 
         <script type="text/javascript">
 
             $(document).ready(function() {
                 // try your js
-
-                $(function() {
-                    var buildtime = $( "#id_p_buildtime" ).datepicker({format: "yyyy-mm-dd", minView: 1, maxView: 4 }).on('changeDate', function(ev) {buildtime.hide();}).data('datepicker');
+/*
+                $.ajax({
+                    url: "/property",
+                    type: "GET",
+                    contentType: "application/json",
+                    success: function (data) {
+                        console.log(data);
+                        //var pl=JSON.parse(data);
+                        for (var p in data){
+                            alert(p);
+                            var phtml='<tr class="gradeC"><td>'+p.p_name+'</td><td>'+p.p_type+'</td><td>'+p.p_address+'</td><td>'+p.p_owner+'</td><td>'+p.p_manager+'</td></tr>';
+                            $('#listbody').append(phtml);
+                        }
+                        }
                 });
-
+*/
                 // uniform
                 $('[data-form=uniform]').uniform();
                 
@@ -169,7 +146,16 @@
                             "sLengthMenu": "_MENU_ records per page"
                     }
                 });
-                
+
+                // datatables
+                $('#datatables2').dataTable( {
+                    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+                    "sPaginationType": "bootstrap",
+                    "oLanguage": {
+                            "sLengthMenu": "_MENU_ records per page"
+                    }
+                });
+
                 // datatables table tools
                 $('#datatablestools').dataTable({
                     "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
@@ -204,6 +190,5 @@
         <script src="/static/js/datatables/extras/TableTools.min.js"></script>
         <script src="/static/js/datatables/DT_bootstrap.js"></script>
         <script src="/static/js/responsive-tables/responsive-tables.js"></script>
-
     {% endblock %}
     </body>

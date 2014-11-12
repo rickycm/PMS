@@ -121,7 +121,7 @@ class Property(models.Model):
     p_manager = models.ForeignKey(User, related_name=u'Property manager', verbose_name=u'Manager')
     p_tenant = models.ForeignKey(TenantInfo, blank=True, null=True, verbose_name=u'Tenant')
     p_area = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Area')
-    p_buildtime = models.DateField(blank=True, null=True, verbose_name=u'Buildtime')
+    p_buildtime = models.DateField(verbose_name=u'Buildtime')
     p_rent_circle = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True, verbose_name=u'Rent Circle')
     p_add_date = models.DateField(blank=True, null=True, auto_now_add=True, verbose_name=u'Add Date')
     p_status = models.IntegerField(choices=P_STATUS, default=1, verbose_name=u'Property Status')
@@ -154,8 +154,9 @@ class PropertyPrice(models.Model):
     pp_property = models.ForeignKey(Property, verbose_name=u'Property')
     pp_price_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Price Name')
     pp_rent_circle = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True)
-    pp_price = models.IntegerField()
+    pp_price = models.IntegerField(default=0, verbose_name=u'Price')
     pp_currency = models.CharField(max_length=10, verbose_name=u'Currency')
+    pp_manager = models.ForeignKey(User, related_name=u'Property Manager', verbose_name=u'Manager')
     pp_add_date = models.DateField(blank=True, null=True, auto_now_add=True, verbose_name=u'Add Date')
 
     def __unicode__(self):
