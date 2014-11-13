@@ -570,7 +570,7 @@ def propertyFormEdit(rq):
 
             return HttpResponseRedirect('/property/list')
 
-    return render_to_response('propertyFormEdit.html', {'title': u'Property Form', 'propertyid': propidStr, 'form': forms.PropertyForm(instance = prop)}, context_instance=RequestContext(rq))
+    return render_to_response('propertyForm.html', {'title': u'Property Form', 'propertyid': propidStr, 'form': forms.PropertyForm(instance = prop)}, context_instance=RequestContext(rq))
 
 
 @login_required
