@@ -536,8 +536,6 @@ def propertyForm(rq):
                 print(afile.name)
                 print(photofile.photofile.url)
 
-
-
             msg = u'Add Property Success!'
             #return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))
             return render_to_response('propertyDetail.html', {'title': u'Property Detail', 'property': new_property}, context_instance=RequestContext(rq))
