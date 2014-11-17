@@ -10,10 +10,11 @@ from models import *
 from bootstrap3_datetime.widgets import DateTimePicker
 from phonenumber_field.modelfields import PhoneNumberField
 
-attrs_dict = {'class': 'required'}
-
 from django.utils.translation import ugettext_lazy as _
 from django import forms
+from datetime import datetime, time, date, timedelta
+
+from models import Property
 
 
 class MultiFileInput(forms.FileInput):
@@ -80,7 +81,8 @@ class CheckinForm(forms.Form):
     tenant = forms.ModelChoiceField(queryset=TenantInfo.objects.all(), widget=forms.Select(attrs={'class': 'required', 'onChange': 'javascript:setPayername();'}))
     price = forms.ModelChoiceField(queryset=PropertyPrice.objects.all(), required=True)
     deposit_amount = forms.IntegerField(required=True, initial=0)
-    deposit_currency = forms.CharField(required=True, initial='USD')
+    deposit_currency = forms.ChoiceField(choices=CURRENCY, required=True, initial='SGD')
+
     payer_name = forms.CharField(required=True)
 
     def __init__(self, *args, **kwargs):
@@ -106,7 +108,7 @@ class CheckinForm(forms.Form):
         cleaned_data = super(CheckinForm, self).clean()
         checkinTime = cleaned_data.get("checkinTime")
         prx_checkoutTime = cleaned_data.get("prx_checkoutTime")
-        print(prx_checkoutTime)
+        #print(prx_checkoutTime)
         return cleaned_data
 '''
         if prx_checkoutTime < checkinTime:
@@ -119,31 +121,39 @@ class CheckinForm(forms.Form):
 
 class CheckoutForm(forms.Form):
 
-    action = forms.ChoiceField(choices=ACTION)
+    action = forms.ChoiceField(choices={(2, u'Check-out')})
     checkoutTime = forms.DateTimeField(required=True, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
                                        "pickSeconds": False, "autoclose": 1, "todayBtn":  1}))
+    propertyid = forms.CharField(widget=forms.HiddenInput())
 
     def clean(self):
         cleaned_data = super(CheckoutForm, self).clean()
-        return cleaned_data
-        '''
-        checkoutTime = cleaned_data.get("prx_checkoutTime")
+        #return cleaned_data
 
-        if prx_checkoutTime < checkinTime:
-            msg = "Check-out time must be later than Check-in time."
-            self.add_error('prx_checkoutTime', msg)
-        else:
-            return cleaned_data
-        '''
+        if cleaned_data.get("propertyid") is not None:
+            prop = Property.objects.get(pk=int(cleaned_data.get("propertyid")))
+            checkoutTime = cleaned_data.get("checkoutTime")
+            #checkoutTime = datetime.strptime(checkoutTimeStr, '%Y-%m-%d %H:%M:%S')
+            checkinHis = ActionHistory.objects.get(pk=prop.p_last_checkinHis)
+            checkinTime = checkinHis.h_checkinTime
+
+            if checkoutTime < checkinTime:
+                msg = "Check-out time must be later than Check-in time."
+                self.add_error('checkoutTime', msg)
+            else:
+                return cleaned_data
+
+
 
 
 class PropertyForm(forms.ModelForm):
 
-    photos = MultiFileField(max_num = 10, min_num = 0, maximum_file_size = 1024*1024*5)
+    photos = MultiFileField(max_num = 10, min_num = 0, maximum_file_size = 1024*1024*5, help_text='(png/jpg/jpeg Only, Suggest Size: 700*500.)')
+    p_note = forms.CharField(widget=forms.Textarea(attrs={'cols':'80','rows':'3'}), label='Description', required=False)
 
     class Meta:
         model = Property
-        fields = ('p_name', 'p_type', 'p_roomtype', 'p_unittype', 'p_address', 'p_owner', 'p_area', 'p_buildtime', 'p_rent_circle', 'p_status', 'photos')
+        fields = ('p_name', 'p_type', 'p_roomtype', 'p_unittype', 'p_address', 'p_owner', 'p_area', 'p_buildtime', 'p_rent_circle', 'p_status', 'photos', 'p_note')
 
     def clean_photos(self):
         photos = self.cleaned_data['photos']
@@ -159,18 +169,22 @@ class PropertyForm(forms.ModelForm):
 
 class TenantForm(forms.ModelForm):
 
+    t_phone = forms.CharField(widget=forms.NumberInput, label='Phone')
+
     class Meta:
         model = TenantInfo
         fields = ('t_name', 't_tpye', 't_gender', 't_nationality', 't_ethnic', 't_profession', 't_phone', 't_address', 't_email', 't_leaseCommencement')
 
     def clean(self):
         cleaned_data = super(TenantForm, self).clean()
-        phone = cleaned_data.get('t_phone')
+        #phone = cleaned_data.get('t_phone')
 
         return cleaned_data
 
 
 class PropertyPriceForm(forms.ModelForm):
+
+    pp_currency = forms.ChoiceField(choices=CURRENCY, required=True, initial='SGD', label='Currency')
 
     class Meta:
         model = PropertyPrice

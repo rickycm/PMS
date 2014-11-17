@@ -18,7 +18,6 @@ from django.utils import dateparse
 from django.db.models import Q
 
 from StringIO import StringIO
-from PIL import Image, ImageFile
 
 from PmsApp import forms, addMonth
 
@@ -338,7 +337,7 @@ def checkout(rq):
                 return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
                                       context_instance=RequestContext(rq))
             form = forms.CheckoutForm(initial={'propertyid': propid, 'action': '2'})
-            return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'property': this_property, 'checkinhis': checkinhis},
+            return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'property': this_property, 'checkinhis': checkinhis, 'propertyid': propid},
                               context_instance=RequestContext(rq))
         else:
             title = u'Error'
@@ -379,11 +378,11 @@ def checkout(rq):
                 prop.save()
                 msg = u'Check-out Success!'
                 #return HttpResponseRedirect('/action/?actionid='+str(actionhis.id))
-                return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'msg': msg},
+                return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'msg': msg, 'propertyid': prop.id},
                                   context_instance=RequestContext(rq))
             else:
                 logger.debug(u'Check-out Failed.')
-                return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'property': prop, 'checkinhis': checkinhis},
+                return render_to_response('checkoutForm.html', {'title': u'Check-out', 'form': form, 'property': prop, 'checkinhis': checkinhis, 'propertyid': prop.id},
                                   context_instance=RequestContext(rq))
         else:
             title = u'Error'
@@ -449,6 +448,7 @@ def propertyDetail(rq):
 def handle_uploaded_image(i):
     import os
     from django.core.files import File
+    from PIL import Image, ImageFile
     # resize image
     imagefile  = StringIO(i.read())
     imageImage = Image.open(imagefile)

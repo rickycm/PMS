@@ -120,6 +120,7 @@
                                                     {# 可以使用as_table，as_ul, as_p来改变格式 #}
                                                     {{ form.as_table }}
                                                 </table>
+                                                <input type="hidden" name="propertyid" value="{{ propertyid }}">
                                                 {% csrf_token %}
                                                 <div class="form-group">
                                                     <input type="submit" value="Submit" class="btn btn-primary"/>

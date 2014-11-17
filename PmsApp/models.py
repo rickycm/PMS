@@ -132,7 +132,7 @@ class Property(models.Model):
     p_last_checkinHis = models.IntegerField(blank=True, null=True)
     p_last_checkoutHis = models.IntegerField(blank=True, null=True)
     p_billsNotPaid = models.IntegerField(blank=True, null=True)
-    p_note = models.TextField(blank=True, null=True)
+    p_note = models.TextField(blank=True, null=True, verbose_name=u'Description')
 
     class Meta:
         verbose_name = u'Property'
@@ -156,7 +156,7 @@ class PropertyPhoto(models.Model):
 class PropertyPrice(models.Model):
     pp_property = models.ForeignKey(Property, verbose_name=u'Property')
     pp_price_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Price Name')
-    pp_rent_circle = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True)
+    pp_rent_circle = models.IntegerField(choices=RENTAL_TYPE, default=1, blank=True, null=True, verbose_name=u'Rent Circle')
     pp_price = models.IntegerField(default=0, verbose_name=u'Price')
     pp_currency = models.CharField(max_length=10, verbose_name=u'Currency')
     pp_manager = models.ForeignKey(User, related_name=u'Property Manager', verbose_name=u'Manager')

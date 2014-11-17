@@ -1,5 +1,9 @@
 pip install django-phonenumber-field
 
+xcode-select --install
+pip install pillow
+pip install PIL --allow-external PIL --allow-unverified PIL
+
 /Users/ricky/env/python2.7/lib/python2.7/site-packages/bootstrap_admin/templates/admin/edit_inline/stacked.html
 
 
