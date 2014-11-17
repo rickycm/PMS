@@ -521,6 +521,7 @@ def propertyForm(rq):
                 p_rent_circle = int(form.data['p_rent_circle']),
                 p_status = int(form.data['p_status']),
                 p_billsNotPaid = 0,
+                p_note = form.data['p_note'],
             )
             new_property.save()
 
@@ -619,6 +620,10 @@ def tenantForm(rq):
                 t_address = form.data['t_address'],
                 t_email = form.data['t_email'],
                 t_manager = user,
+                t_gender = form.data['t_gender'],
+                t_nationality = form.data['t_nationality'],
+                t_ethnic = form.data['t_ethnic'],
+                t_profession = form.data['t_profession'],
             )
             new_tenant.save()
             msg = u'Add Tenant Success!'
