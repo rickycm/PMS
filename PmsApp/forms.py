@@ -72,18 +72,19 @@ class CheckinForm(forms.Form):
     #action = forms.ChoiceField(choices=ACTION, widget=forms.Select(attrs={'disabled': 'disabled'}))
     action = forms.ChoiceField(choices={(1, u'Check-in')})
     rent_circle = forms.ChoiceField(choices=RENTAL_TYPE, initial={1: u'Monthly'})
-    checkinTime = forms.DateTimeField(required=True, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
-                                       "pickSeconds": False, "autoclose": 1, "todayBtn":  1}))
+    #checkinTime = forms.DateTimeField(required=True, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
+    #                                   "pickSeconds": False, "autoclose": 1, "todayBtn":  1}))
+    checkinTime = forms.DateField(required=True, widget=forms.TextInput())
     circle_count = forms.IntegerField(initial=1, widget=forms.NumberInput(attrs={'class': 'required', 'onBlur': 'javascript:getCheckoutDate();'}))
     #prx_checkoutTime = forms.DateTimeField(required=True, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
     #                                        "pickSeconds": False, "autoclose": 1, "todayBtn":  1, "disabled": True}))
-    prx_checkoutTime = forms.DateTimeField(required=True, widget=forms.TextInput(attrs={'class': 'required', 'onClick': 'javascript:getCheckoutDate();'}))
+    prx_checkoutTime = forms.DateField(required=True, widget=forms.TextInput(attrs={'class': 'required', 'onClick': 'javascript:getCheckoutDate();', 'readonly': 'true'}))
     tenant = forms.ModelChoiceField(queryset=TenantInfo.objects.all(), widget=forms.Select(attrs={'class': 'required', 'onChange': 'javascript:setPayername();'}))
     price = forms.ModelChoiceField(queryset=PropertyPrice.objects.all(), required=True)
     deposit_amount = forms.IntegerField(required=True, initial=0)
     deposit_currency = forms.ChoiceField(choices=CURRENCY, required=True, initial='SGD')
 
-    payer_name = forms.CharField(required=True)
+    #payer_name = forms.CharField(required=True)
 
     def __init__(self, *args, **kwargs):
         userid = kwargs.pop('user')
@@ -122,8 +123,7 @@ class CheckinForm(forms.Form):
 class CheckoutForm(forms.Form):
 
     action = forms.ChoiceField(choices={(2, u'Check-out')})
-    checkoutTime = forms.DateTimeField(required=True, widget=DateTimePicker(options={"data-date-format": "YYYY-MM-DD HH:mm",
-                                       "pickSeconds": False, "autoclose": 1, "todayBtn":  1}))
+    checkoutTime = forms.DateField(required=True, widget=forms.TextInput())
     propertyid = forms.CharField(widget=forms.HiddenInput())
 
     def clean(self):
@@ -148,12 +148,13 @@ class CheckoutForm(forms.Form):
 
 class PropertyForm(forms.ModelForm):
 
-    photos = MultiFileField(max_num = 10, min_num = 0, maximum_file_size = 1024*1024*5, help_text='(png/jpg/jpeg Only, Suggest Size: 700*500.)')
-    p_note = forms.CharField(widget=forms.Textarea(attrs={'cols':'80','rows':'3'}), label='Description', required=False)
+    photos = MultiFileField(max_num = 10, min_num = 0, maximum_file_size = 1024*1024*5, help_text='(Select one or more Photos, png/jpg/jpeg Only, Suggest Size: 700*500.)')
+    note = forms.CharField(widget=forms.Textarea(attrs={'cols':'80','rows':'3'}), label='Description', required=False)
 
     class Meta:
         model = Property
-        fields = ('p_name', 'p_type', 'p_roomtype', 'p_unittype', 'p_address', 'p_owner', 'p_area', 'p_buildtime', 'p_rent_circle', 'p_status', 'photos', 'p_note')
+        fields = ('p_name', 'p_address', 'p_type', 'p_roomtype', 'p_unittype', 'p_ownername', 'p_ownerphone', 'p_owneremail', 'p_ownerid',
+                  'p_buildtime', 'p_rent_circle', 'p_status', 'photos', 'note')
 
     def clean_photos(self):
         photos = self.cleaned_data['photos']
@@ -173,7 +174,7 @@ class TenantForm(forms.ModelForm):
 
     class Meta:
         model = TenantInfo
-        fields = ('t_name', 't_tpye', 't_gender', 't_nationality', 't_ethnic', 't_profession', 't_phone', 't_address', 't_email', 't_leaseCommencement')
+        fields = ('t_name', 't_gender', 't_nationality', 't_ethnic', 't_profession', 't_phone', 't_address', 't_email')
 
     def clean(self):
         cleaned_data = super(TenantForm, self).clean()

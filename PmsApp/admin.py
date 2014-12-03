@@ -52,7 +52,7 @@ class UserAdmin(UserAdmin):
 
 
 class PropertyAdmin(admin.ModelAdmin):
-    list_display = ('p_name', 'p_type', 'p_owner', 'p_manager', 'p_rent_circle', 'p_status')
+    list_display = ('p_name', 'p_type', 'p_ownername', 'p_ownerphone', 'p_owneremail', 'p_ownerid', 'p_manager', 'p_rent_circle', 'p_status')
     search_fields = ('p_name', 'p_owner')
     list_filter = ('p_name', 'p_status')
     ordering = ('-p_add_date',)

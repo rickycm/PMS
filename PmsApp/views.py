@@ -235,7 +235,8 @@ def checkin(rq):
                 d_amount = form.data['deposit_amount'],
                 d_currency = form.data['deposit_currency'],
                 d_tenant = tenant,
-                d_payer_name = form.data['payer_name'],
+                #d_payer_name = form.data['payer_name'],
+                d_payer_name = tenant.t_name,
                 d_actionHistory = actionhis,
 
             )
@@ -243,7 +244,7 @@ def checkin(rq):
 
             #Generate Bill
             for i in range(int(form.data['circle_count'])):
-                checkinTime = dateparse.parse_datetime(form.data['checkinTime'])
+                checkinTime = dateparse.parse_date(form.data['checkinTime'])
                 if form.data['rent_circle'] == '1':
                     billdate = addMonth.datetime_offset_by_month(checkinTime, i)
                     period_end = addMonth.datetime_offset_by_month(checkinTime, i+1)
@@ -302,7 +303,7 @@ def propertyPrice_list(request):
 
 def getCheckoutDate(request):
     checkoutdate = ''
-    checkinDate = dateparse.parse_datetime(request.GET['checkinDate'])
+    checkinDate = dateparse.parse_date(request.GET['checkinDate'])
     #checkinDate = datetime.strptime(request.GET['checkinDate'])
     rentCircle = request.GET['rentCircle']
     circleCount = int(request.GET['circleCount'])
@@ -316,8 +317,9 @@ def getCheckoutDate(request):
     elif rentCircle == '4':
         checkoutdate = checkinDate + timedelta(days=circleCount)
 
-    checkoutdate = checkoutdate.replace(hour=checkinDate.hour, minute=checkinDate.minute)
-    return HttpResponse(checkoutdate.strftime("%Y-%m-%d %H:%M"))
+    #checkoutdate = checkoutdate.replace(hour=checkinDate.hour, minute=checkinDate.minute)
+    #return HttpResponse(checkoutdate.strftime("%Y-%m-%d %H:%M"))
+    return HttpResponse(checkoutdate.strftime("%Y-%m-%d"))
 
 
 @login_required
@@ -347,8 +349,6 @@ def checkout(rq):
                                       context_instance=RequestContext(rq))
     else:
         form = forms.CheckoutForm(rq.POST)
-        print(form.data['action'])
-        print(form.data['checkoutTime'])
         propid = rq.GET.get('propertyid')
         if propid != None:
             try:
@@ -504,24 +504,21 @@ def propertyForm(rq):
     else:
         form = forms.PropertyForm(rq.POST, rq.FILES);
         if form.is_valid():
-            try:
-                owner = User.objects.get(pk=int(form.data['p_owner']))
-            except:
-                print(int(form.data['p_owner']))
-                owner = User.objects.get(pk=0)
 
             new_property = Property.objects.create(
                 p_name = form.data['p_name'],
                 p_type = int(form.data['p_type']),
                 p_address = form.data['p_address'],
-                p_owner = owner,
+                p_ownername = form.data['p_ownername'],
+                p_ownerphone = form.data['p_ownerphone'],
+                p_owneremail = form.data['p_owneremail'],
+                p_ownerid = form.data['p_ownerid'],
                 p_manager = user,
-                p_area = form.data['p_area'],
                 p_buildtime = form.data['p_buildtime'],
                 p_rent_circle = int(form.data['p_rent_circle']),
                 p_status = int(form.data['p_status']),
                 p_billsNotPaid = 0,
-                p_note = form.data['p_note'],
+                p_note = form.data['note'],
             )
             new_property.save()
 
@@ -613,7 +610,7 @@ def tenantForm(rq):
         if form.is_valid():
             new_tenant = TenantInfo.objects.create(
                 t_name = form.data['t_name'],
-                t_tpye = int(form.data['t_tpye']),
+                #t_tpye = int(form.data['t_tpye']),
                 t_phone = form.data['t_phone'],
                 t_address = form.data['t_address'],
                 t_email = form.data['t_email'],

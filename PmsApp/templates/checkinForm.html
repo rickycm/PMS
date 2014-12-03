@@ -6,8 +6,7 @@
         <link href="/static/css/DT_bootstrap.css" rel="stylesheet" />
         <link href="/static/css/responsive-tables.css" rel="stylesheet" />
 
-        <link href="/static/css/datetimepicker.css" rel="stylesheet" media="screen">
-        <link href="/static/css/datepicker.css" rel="stylesheet" media="screen">
+        <link href="/static/css/jquery-ui.css" rel="stylesheet" media="screen">
 
 
         {{ form.media }}
@@ -99,7 +98,6 @@
 
     {% block footerjs %}
         {{ block.super }}
-        <script type="text/javascript" src="/static/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
 
         <script type="text/javascript">
 
@@ -182,6 +180,10 @@
 
             $(document).ready(function() {
                 // try your js
+
+                $(function() {
+                    $( "#id_checkinTime" ).datepicker({changeYear : true, changeMonth : true, dateFormat: 'yy-mm-dd'});
+                });
 
                 // uniform
                 $('[data-form=uniform]').uniform();
