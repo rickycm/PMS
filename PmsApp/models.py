@@ -85,6 +85,7 @@ class TenantInfo(models.Model):
     t_phone = models.CharField(max_length=20, blank=True, null=True , verbose_name=u'Phone')
     t_address = models.CharField(max_length=2000, blank=True, null=True, verbose_name=u'Address')
     t_email = models.EmailField(max_length=1000, blank=True, null=True, verbose_name=u'E-mail')
+    t_passport = models.CharField(max_length=20, blank=True, null=True, verbose_name=u'Passport')
     #t_leaseCommencement = models.DateField(blank=True, null=True, verbose_name=u'lease commencement')
     t_date = models.DateTimeField(blank=True, null=True, verbose_name=u'Add Date')
     t_manager = models.ForeignKey(User, related_name=u'Manager', verbose_name=u'Manager')
