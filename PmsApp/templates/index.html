@@ -92,64 +92,134 @@
 
                             
                             <div class="divider-content"><span></span></div>
-<!--
-                            <!-- tab stat
-                            <div class="box-tab corner-all">
-                                <div class="box-header corner-top">
-                                    <ul class="nav nav-tabs" id="tab-stat">
-                                        <li class="active"><a data-toggle="tab" href="#system-stat">System Stat</a></li>
-                                        <li><a data-toggle="tab" href="#server-stat">Server Stat</a></li>
-                                    </ul>
-                                </div>
-                                <div class="box-body">
-                                    <div class="tab-content">
-                                        <div class="tab-pane fade in active" id="system-stat">
-                                            <div class="row-fluid">
-                                                <div class="span4">
-                                                    <div class="dashboard-stat">
-                                                        <div id="visitor-stat" class="chart" style="height: 120px;"></div>
-                                                        <div class="stat-label grd-green color-white">Visitor</div>
-                                                    </div>
-                                                </div>
-                                                <div class="span4">
-                                                    <div class="dashboard-stat">
-                                                        <div id="order-stat" class="chart" style="height: 120px;"></div>
-                                                        <div class="stat-label grd-teal color-white">Users</div>
-                                                    </div>
-                                                </div>
-                                                <div class="span4">
-                                                    <div class="dashboard-stat">
-                                                        <div id="user-stat" class="chart" style="height: 120px;"></div>
-                                                        <div class="stat-label grd-red color-white">Orders</div>
-                                                    </div>
+
+                            <!-- =========================================
+                                            ACCORDION
+                            =========================================== -->
+
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <div class="accordion" id="accordion">
+
+                                        <div class="accordion-group">
+                                            <div class="accordion-heading">
+                                                <a class="accordion-toggle bg-blue color-white" data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                                                    Property available:
+                                                </a>
+                                            </div>
+                                            <div id="collapse2" class="accordion-body collapse in">
+                                                <div class="accordion-inner">
+                                                    <table id="datatables" class="table table-bordered table-striped responsive">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Property Name</th>
+                                                        <th>Property Type</th>
+                                                        <th>Address</th>
+                                                        <th>Rent Circle</th>
+                                                        <th>Status</th>
+                                                        <th>Bills</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="listbody">
+                                                    {% for property in properties %}
+                                                        <tr class="odd gradeX">
+                                                            <td><a href="/propertyDetail/?propertyid={{ property.id }}"><font color="#4863A0" font-weight="bold">{{ property.p_name }}</font></a></td>
+                                                            <td>{{ property.get_p_type_display }}</td>
+                                                            <td>{{ property.p_address }}</td>
+                                                            <td class="center">{{ property.get_p_rent_circle_display }}</td>
+                                                            <td class="center">{{ property.get_p_status_display }}</td>
+                                                            <td class="center">
+                                                                <a class="btn btn-info btn-small" href="/billList/?propertyid={{ property.id }}&method=list">{{ property.p_billsNotPaid }}</a>
+                                                            </td>
+                                                            <td class="center">
+                                                                {% ifequal property.p_status 1 %}
+                                                                <a class="btn btn-success btn-small" href="/checkinForm/?propertyid={{ property.id }}"><i class="icon-user"></i> Check-in</a>
+                                                                {% endifequal %}
+                                                                {% ifequal property.p_status 2 %}
+                                                                <a class="btn btn-primary btn-small" href="/checkoutForm/?propertyid={{ property.id }}"><i class="icon-share"></i> Check-out</a>
+                                                                {% endifequal %}
+                                                                <a class="btn btn-info btn-small" href="/propertyFormEdit/?propertyid={{ property.id }}"><i class="icon-share"></i> Edit</a>
+                                                                <a class="btn btn-danger btn-small" href="/deleteProperty/?propertyid={{ property.id }}"><i class="icon-share"></i> Delete</a>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+
+                                                </tbody>
+                                            </table>
+
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="tab-pane fade" id="server-stat">
-                                            <div class="row-fluid">
-                                                <div class="span6">
-                                                    <div class="dashboard-stat" rel="tooltip" title="usage 2465kb of 5000kb">
-                                                        <input data-chart="knob" type="text" data-readonly="true" data-width="120" data-height="120" data-fgcolor="#00A600" value="2465" data-min="0" data-max="5000" />
-                                                        <div class="stat-label grd-green color-white">Monthly Bandwidth</div>
-                                                    </div>
-                                                </div>
-                                                <div class="span6">
-                                                    <div class="dashboard-stat" rel="tooltip" title="usage 8795kb of 10000kb">
-                                                        <input data-chart="knob" type="text" data-readonly="true" data-width="120" data-height="120" data-fgcolor="#00A0B1" value="8795" data-min="0" data-max="10000" />
-                                                        <div class="stat-label grd-teal color-white">Disk Space</div>
-                                                    </div>
-                                                </div>
-                                                <div class="span6">
-                                                    <div class="dashboard-stat" rel="tooltip" title="server condition 70%, it's good!">
-                                                        <input data-chart="knob" type="text" data-readonly="true" data-width="120" data-height="120" data-fgcolor="#AC193D" value="70" data-min="0" data-max="100" />
-                                                        <div class="stat-label grd-red color-white">Server Health</div>
-                                                    </div>
+
+                                        <div class="accordion-group">
+                                            <div class="accordion-heading">
+                                                <a class="accordion-toggle bg-silver color-black" data-toggle="collapse" data-parent="#accordion" href="#collapse8">
+                                                    Bills of the month:
+                                                </a>
+                                            </div>
+                                            <div id="collapse8" class="accordion-body collapse">
+                                                <div class="accordion-inner">
+                                                    <table id="billlist" class="table table-bordered table-striped responsive">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Property Name</th>
+                                                                <th>Tenant</th>
+                                                                <th>Period Start</th>
+                                                                <th>Period End</th>
+                                                                <th>Due Date</th>
+                                                                <th>Rent Circle</th>
+                                                                <th>Bill Note</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="billlistbody">
+                                                            {% for rb in rentalbillList_notpaid %}
+                                                                <tr class="odd gradeX">
+                                                                    <td><a href="/propertyDetail/?propertyid={{ property.id }}">{{ property.p_name }}</a></td>
+                                                                    <td>{{ rb.rb_tenant }}</td>
+                                                                    <td>{{ rb.rb_period_start|date:"Y-m-d" }}</td>
+                                                                    <td class="center">{{ rb.rb_period_end|date:"Y-m-d" }}</td>
+                                                                    <td class="center">{{ rb.rb_should_pay_date|date:"Y-m-d" }}</td>
+                                                                    <td class="center">{{ rb.get_rb_type_display }}</td>
+                                                                    <td class="center">{{ rb.rb_note }}</td>
+                                                                    <td class="center">
+                                                                        {% ifequal rb.rb_paid 0 %}
+                                                                        <a class="btn btn-success btn-small" href="/payBill/?propertyid={{ property.id }}&billid={{ rb.id }}&backurl=/billList "><i class="icon-user"></i> Set Paid</a>
+                                                                        {% endifequal %}
+                                                                    </td>
+                                                                </tr>
+                                                            {% endfor %}
+
+                                                        </tbody>
+                                                    </table>
+
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="accordion-group">
+                                            <div class="accordion-heading">
+                                                <a class="accordion-toggle bg-teal color-white" data-toggle="collapse" data-parent="#accordion" href="#collapse10">
+                                                    Collapsible Group Item #10
+                                                </a>
+                                            </div>
+                                            <div id="collapse10" class="accordion-body collapse">
+                                                <div class="accordion-inner">
+                                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
-</div></div>                            </div><!-- /tab stat -->
+                            </div>
+
+
+                            <!-- =========================================
+                                            END ACCORDION
+                            =========================================== -->
+
 
 
                             

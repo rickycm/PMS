@@ -220,6 +220,7 @@ class RentalBill(models.Model):
     rb_paid = models.IntegerField(choices=PAID, default=0, verbose_name=u'Status')
     rb_actionHistory = models.ForeignKey(ActionHistory, blank=True, null=True)
     rb_date = models.DateTimeField(blank=True, null=True, auto_now_add=True, verbose_name=u'Add Date')
+    rb_manager = models.ForeignKey(User, verbose_name=u'Manager')
 
     objects = RentalBillManager()
 

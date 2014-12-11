@@ -4,6 +4,9 @@ xcode-select --install
 pip install pillow
 pip install PIL --allow-external PIL --allow-unverified PIL
 
+
+pip install django-celery
+
 /Users/ricky/env/python2.7/lib/python2.7/site-packages/bootstrap_admin/templates/admin/edit_inline/stacked.html
 
 
@@ -73,3 +76,6 @@ http://simple-is-better.com/news/466
 
 ***********
 http://koensblog.eu/blog/7/multiple-file-upload-django
+
+Mac下RabbitMQ搭建和管理
+http://www.th7.cn/system/mac/201410/72532.shtml

@@ -186,6 +186,15 @@ class TenantForm(forms.ModelForm):
 class PropertyPriceForm(forms.ModelForm):
 
     pp_currency = forms.ChoiceField(choices=CURRENCY, required=True, initial='SGD', label='Currency')
+    pp_property = forms.ModelChoiceField(queryset=Property.objects.all(), widget=forms.Select(attrs={'class': 'required'}))
+
+    def __init__(self, *args, **kwargs):
+        userid = kwargs.pop('user')
+        u = User.objects.filter(pk=userid)
+        super(PropertyPriceForm, self).__init__(*args, **kwargs)
+
+        self.fields['pp_property'].choices = [('', '----------')] + [(properties.id, properties.p_name)
+                                for properties in Property.objects.filter(p_manager=u)]
 
     class Meta:
         model = PropertyPrice

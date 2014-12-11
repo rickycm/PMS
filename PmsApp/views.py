@@ -5,7 +5,8 @@ sys.setdefaultencoding('utf-8')
 
 import logging, json
 import hashlib
-from datetime import datetime, time, date, timedelta
+from datetime import time, date, timedelta
+import calendar, datetime
 
 from django.utils import timezone
 from django.shortcuts import render_to_response, get_object_or_404
@@ -14,7 +15,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
-from django.utils import dateparse
+from django.utils import dateparse,timezone
 from django.db.models import Q
 
 from StringIO import StringIO
@@ -53,11 +54,21 @@ def index(request):
     tenantCount = TenantInfo.objects.filter(t_manager=user).count()
     billToPayCount = 0
     #bill_list = RentalBill.objects.toPayListOfManger(pay=0, userId=user.id, startdate=addMonth.datetime_offset_by_month(date.today(), -1), enddate=date.today())
-    bill_list = RentalBill.objects.toPayListOfManger(pay=0, userId=user.id)
-    if bill_list:
-        billToPayCount = len(list(bill_list))
+    #bill_list = RentalBill.objects.toPayListOfManger(pay=0, userId=user.id)
+    bill_list = RentalBill.objects.filter(Q(rb_manager=user), Q(rb_paid=0))
+    print(bill_list)aa
+    billToPayCount = bill_list.count()
     #print(propertyCount, tenantCount, billToPayCount)
-    return render_to_response("index.html", {'user': user, 'propertyCount': propertyCount, 'tenantCount': tenantCount, 'billToPayCount': billToPayCount}, context_instance=RequestContext(request))
+
+    propertylist = Property.objects.filter(Q(p_manager=user), Q(p_status=1))
+    now = timezone.now()
+    billlist = []
+    for bill in bill_list:
+        print (bill)
+        #if now.month == bill.rb_should_pay_date.month:
+
+    return render_to_response("index.html", {'user': user, 'propertyCount': propertyCount, 'tenantCount': tenantCount,
+                                             'billToPayCount': billToPayCount, 'properties': propertylist}, context_instance=RequestContext(request))
 
 
 
@@ -684,15 +695,15 @@ def priceForm(rq):
             priceId = int(priceIdStr)
             try:
                 propertyPrice = PropertyPrice.objects.get(pk=priceId)
-                form = forms.PropertyPriceForm(instance=propertyPrice)
+                form = forms.PropertyPriceForm(user=user.id, instance=propertyPrice)
             except:
-                form = forms.PropertyPriceForm()
+                form = forms.PropertyPriceForm(user=user.id)
         else:
-            form = forms.PropertyPriceForm()
+            form = forms.PropertyPriceForm(user=user.id)
 
         return render_to_response('priceForm.html', {'title': u'Property Price Form', 'form': form}, context_instance=RequestContext(rq))
     else:
-        form = forms.PropertyPriceForm(rq.POST)
+        form = forms.PropertyPriceForm(rq.POST, user=user.id)
         if form.is_valid():
             property = get_object_or_404(Property, pk=int(form.data['pp_property']))
             new_price = PropertyPrice.objects.create(
@@ -722,13 +733,13 @@ def priceFormEdit(rq):
     price = get_object_or_404(PropertyPrice, pk=int(priceIdStr))
 
     if rq.method == 'POST':
-        form = forms.PropertyPriceForm(rq.POST, instance = price)
+        form = forms.PropertyPriceForm(rq.POST, instance = price, user=user.id)
         if form.is_valid():
             price = form.save()
 
             return HttpResponseRedirect('/priceList')
 
-    return render_to_response('priceForm.html', {'title': u'Property Price Form', 'priceId': priceIdStr, 'form': forms.PropertyPriceForm(instance = price)}, context_instance=RequestContext(rq))
+    return render_to_response('priceForm.html', {'title': u'Property Price Form', 'priceId': priceIdStr, 'form': forms.PropertyPriceForm(instance = price, user=user.id)}, context_instance=RequestContext(rq))
 
 
 @login_required
