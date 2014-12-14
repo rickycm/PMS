@@ -104,12 +104,13 @@
                                         <div class="accordion-group">
                                             <div class="accordion-heading">
                                                 <a class="accordion-toggle bg-blue color-white" data-toggle="collapse" data-parent="#accordion" href="#collapse2">
-                                                    Property available:
+                                                    Property available
                                                 </a>
                                             </div>
                                             <div id="collapse2" class="accordion-body collapse in">
                                                 <div class="accordion-inner">
-                                                    <table id="datatables" class="table table-bordered table-striped responsive">
+                                                {% if properties %}
+                                                <table id="datatables" class="table table-bordered table-striped responsive">
                                                 <thead>
                                                     <tr>
                                                         <th>Property Name</th>
@@ -147,6 +148,9 @@
 
                                                 </tbody>
                                             </table>
+                                            {% else %}
+                                                <p align="center">No Property Available.</p>
+                                            {% endif %}
 
                                                 </div>
                                             </div>
@@ -155,11 +159,12 @@
                                         <div class="accordion-group">
                                             <div class="accordion-heading">
                                                 <a class="accordion-toggle bg-silver color-black" data-toggle="collapse" data-parent="#accordion" href="#collapse8">
-                                                    Bills of the month:
+                                                    Bills of the month
                                                 </a>
                                             </div>
                                             <div id="collapse8" class="accordion-body collapse">
                                                 <div class="accordion-inner">
+                                                    {% if billofmonth %}
                                                     <table id="billlist" class="table table-bordered table-striped responsive">
                                                         <thead>
                                                             <tr>
@@ -174,9 +179,9 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody id="billlistbody">
-                                                            {% for rb in rentalbillList_notpaid %}
+                                                            {% for rb in billofmonth %}
                                                                 <tr class="odd gradeX">
-                                                                    <td><a href="/propertyDetail/?propertyid={{ property.id }}">{{ property.p_name }}</a></td>
+                                                                    <td>{{ rb.rb_property_name }}</td>
                                                                     <td>{{ rb.rb_tenant }}</td>
                                                                     <td>{{ rb.rb_period_start|date:"Y-m-d" }}</td>
                                                                     <td class="center">{{ rb.rb_period_end|date:"Y-m-d" }}</td>
@@ -190,14 +195,16 @@
                                                                     </td>
                                                                 </tr>
                                                             {% endfor %}
-
                                                         </tbody>
                                                     </table>
+                                                    {% else %}
+                                                        <p align="center">No Bill of this month.</p>
+                                                    {% endif %}
 
                                                 </div>
                                             </div>
                                         </div>
-
+<!--
                                         <div class="accordion-group">
                                             <div class="accordion-heading">
                                                 <a class="accordion-toggle bg-teal color-white" data-toggle="collapse" data-parent="#accordion" href="#collapse10">
@@ -210,7 +217,7 @@
                                                 </div>
                                             </div>
                                         </div>
-
+-->
                                     </div>
                                 </div>
                             </div>

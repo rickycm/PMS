@@ -209,6 +209,7 @@ class Deposit(models.Model):
 
 class RentalBill(models.Model):
     rb_property = models.ForeignKey(Property, verbose_name=u'Property')
+    rb_property_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Porperty Name')
     rb_period_start = models.DateField(blank=True, null=True, verbose_name=u'Start Date')
     rb_period_end = models.DateField(blank=True, null=True, verbose_name=u'End Date')
     rb_should_pay_date = models.DateField(blank=True, null=True, verbose_name=u'Due Date')

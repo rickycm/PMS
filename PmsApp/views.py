@@ -6,9 +6,7 @@ sys.setdefaultencoding('utf-8')
 import logging, json
 import hashlib
 from datetime import time, date, timedelta
-import calendar, datetime
 
-from django.utils import timezone
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.contrib.auth import authenticate, login, logout
@@ -51,23 +49,25 @@ def login_form(request):
 def index(request):
     user = request.user
     propertyCount = Property.objects.filter(Q(p_manager=user), ~Q(p_status=-1)).count()
+    propertylist = Property.objects.filter(Q(p_manager=user), Q(p_status=1))
+    print(propertylist)
     tenantCount = TenantInfo.objects.filter(t_manager=user).count()
     billToPayCount = 0
     #bill_list = RentalBill.objects.toPayListOfManger(pay=0, userId=user.id, startdate=addMonth.datetime_offset_by_month(date.today(), -1), enddate=date.today())
     #bill_list = RentalBill.objects.toPayListOfManger(pay=0, userId=user.id)
     bill_list = RentalBill.objects.filter(Q(rb_manager=user), Q(rb_paid=0))
-    print(bill_list)aa
+
     billToPayCount = bill_list.count()
     #print(propertyCount, tenantCount, billToPayCount)
 
-    propertylist = Property.objects.filter(Q(p_manager=user), Q(p_status=1))
-    now = timezone.now()
+    import datetime
+    now = datetime.datetime.now()
     billlist = []
     for bill in bill_list:
-        print (bill)
-        #if now.month == bill.rb_should_pay_date.month:
+        if now.month == bill.rb_should_pay_date.month:
+            billlist.append(bill)
 
-    return render_to_response("index.html", {'user': user, 'propertyCount': propertyCount, 'tenantCount': tenantCount,
+    return render_to_response("index.html", {'user': user, 'propertyCount': propertyCount, 'tenantCount': tenantCount, 'billofmonth': billlist,
                                              'billToPayCount': billToPayCount, 'properties': propertylist}, context_instance=RequestContext(request))
 
 
@@ -271,12 +271,14 @@ def checkin(rq):
 
                 rb = RentalBill.objects.create(
                     rb_property = prop,
+                    rb_property_name = prop.p_name,
                     rb_period_start = billdate,
                     rb_period_end = period_end,
                     rb_should_pay_date = billdate,
                     rb_type = form.data['rent_circle'],
                     rb_tenant = tenant,
                     rb_actionHistory = actionhis,
+                    rb_manager_id = user.id,
                 )
                 rb.save()
 
