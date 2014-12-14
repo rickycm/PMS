@@ -1,0 +1,389 @@
+{% extends "base.html" %}
+
+    {% block pagehead %}
+        {{ block.super }}
+    {% endblock %}
+
+    <body>
+    {% block content %}
+        {% include "header_full.html" %}
+
+        <!-- section content -->
+        <section class="section">
+            <div class="row-fluid">
+                {% include "side_left.html" %}
+                
+                <!-- span content -->
+                <div class="span11">
+                    <!-- content -->
+                    <div class="content">
+                        <!-- content-header -->
+
+                        
+                        <!-- content-breadcrumb -->
+                        <div class="content-breadcrumb">
+                            <!--breadcrumb-nav
+                            <ul class="breadcrumb-nav pull-right">
+                                <li class="divider"></li>
+                                <li class="btn-group">
+                                    <a href="#" class="btn btn-small btn-link">
+                                        <i class="icofont-money"></i> Orders <span class="color-red">(+12)</span>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li class="btn-group">
+                                    <a href="#" class="btn btn-small btn-link">
+                                        <i class="icofont-user"></i> Users <span class="color-red">(+34)</span>
+                                    </a>
+                                </li>
+                            </ul><!--/breadcrumb-nav-->
+                            
+                            <!--breadcrumb-->
+                            <ul class="breadcrumb">
+                                <li><a href="/"><i class="icofont-home"></i> Dashboard</a></li>
+                            </ul><!--/breadcrumb-->
+                        </div><!-- /content-breadcrumb -->
+                        
+                        <!-- content-body -->
+                        <div class="content-body">
+<div class="row-fluid"><div class="span12">
+                            <!-- dashboar -->
+                            <div class="shortcut-group">
+                                                <div class="shortcut-group">
+                                                <ul class="b-btn-group">
+                                                    <li>
+                                                        <a href="/property/list/" class="b-btn grd-teal">
+                                                            <span class="b-btn-slide-text color-white">Go</span>
+                                                            <i class="img icofont-bar-chart color-silver helper-font-48"></i>
+                                                            <span class="b-btn-text helper-font-24 color-white"><small>Properties</small> {{ propertyCount }}</span>
+                                                            <span class="b-btn-icon-right">
+                                                                <span>
+                                                                    <i class="icofont-arrow-down helper-font-24 color-white"></i>
+                                                                </span>
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/tenantList" class="b-btn grd-green">
+                                                            <span class="b-btn-slide-text color-white">Go</span>
+                                                            <i class="img icofont-plus-sign color-silver helper-font-48"></i>
+                                                            <span class="b-btn-text helper-font-24 color-white"><small>Tenants</small> {{ tenantCount }}</span>
+                                                            <span class="b-btn-icon-right">
+                                                                <span>
+                                                                    <i class="icofont-arrow-down helper-font-24 color-white"></i>
+                                                                </span>
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/allBill_list" class="b-btn grd-blue">
+                                                            <span class="b-btn-slide-text color-white">Go</span>
+                                                            <span class="img color-silver helper-font-48">$</span>
+                                                            <span class="b-btn-text helper-font-24 color-white"><small>Bills to Pay</small> {{ billToPayCount }}</span>
+                                                            <span class="b-btn-icon-right">
+                                                                <span>
+                                                                    <i class="icofont-arrow-down helper-font-24 color-white"></i>
+                                                                </span>
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div><!--/b-btn customize-->
+
+                            
+                            <div class="divider-content"><span></span></div>
+
+                            <!-- =========================================
+                                            ACCORDION
+                            =========================================== -->
+
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <div class="accordion" id="accordion">
+
+                                        <div class="accordion-group">
+                                            <div class="accordion-heading">
+                                                <a class="accordion-toggle bg-blue color-white" data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                                                    Property available
+                                                </a>
+                                            </div>
+                                            <div id="collapse2" class="accordion-body collapse in">
+                                                <div class="accordion-inner">
+                                                {% if properties %}
+                                                <table id="datatables" class="table table-bordered table-striped responsive">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Property Name</th>
+                                                        <th>Property Type</th>
+                                                        <th>Address</th>
+                                                        <th>Rent Circle</th>
+                                                        <th>Status</th>
+                                                        <th>Bills</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="listbody">
+                                                    {% for property in properties %}
+                                                        <tr class="odd gradeX">
+                                                            <td><a href="/propertyDetail/?propertyid={{ property.id }}"><font color="#4863A0" font-weight="bold">{{ property.p_name }}</font></a></td>
+                                                            <td>{{ property.get_p_type_display }}</td>
+                                                            <td>{{ property.p_address }}</td>
+                                                            <td class="center">{{ property.get_p_rent_circle_display }}</td>
+                                                            <td class="center">{{ property.get_p_status_display }}</td>
+                                                            <td class="center">
+                                                                <a class="btn btn-info btn-small" href="/billList/?propertyid={{ property.id }}&method=list">{{ property.p_billsNotPaid }}</a>
+                                                            </td>
+                                                            <td class="center">
+                                                                {% ifequal property.p_status 1 %}
+                                                                <a class="btn btn-success btn-small" href="/checkinForm/?propertyid={{ property.id }}"><i class="icon-user"></i> Check-in</a>
+                                                                {% endifequal %}
+                                                                {% ifequal property.p_status 2 %}
+                                                                <a class="btn btn-primary btn-small" href="/checkoutForm/?propertyid={{ property.id }}"><i class="icon-share"></i> Check-out</a>
+                                                                {% endifequal %}
+                                                                <a class="btn btn-info btn-small" href="/propertyFormEdit/?propertyid={{ property.id }}"><i class="icon-share"></i> Edit</a>
+                                                                <a class="btn btn-danger btn-small" href="/deleteProperty/?propertyid={{ property.id }}"><i class="icon-share"></i> Delete</a>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+
+                                                </tbody>
+                                            </table>
+                                            {% else %}
+                                                <p align="center">No Property Available.</p>
+                                            {% endif %}
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="accordion-group">
+                                            <div class="accordion-heading">
+                                                <a class="accordion-toggle bg-silver color-black" data-toggle="collapse" data-parent="#accordion" href="#collapse8">
+                                                    Bills of the month
+                                                </a>
+                                            </div>
+                                            <div id="collapse8" class="accordion-body collapse">
+                                                <div class="accordion-inner">
+                                                    {% if billofmonth %}
+                                                    <table id="billlist" class="table table-bordered table-striped responsive">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Property Name</th>
+                                                                <th>Tenant</th>
+                                                                <th>Period Start</th>
+                                                                <th>Period End</th>
+                                                                <th>Due Date</th>
+                                                                <th>Rent Circle</th>
+                                                                <th>Bill Note</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="billlistbody">
+                                                            {% for rb in billofmonth %}
+                                                                <tr class="odd gradeX">
+                                                                    <td>{{ rb.rb_property_name }}</td>
+                                                                    <td>{{ rb.rb_tenant }}</td>
+                                                                    <td>{{ rb.rb_period_start|date:"Y-m-d" }}</td>
+                                                                    <td class="center">{{ rb.rb_period_end|date:"Y-m-d" }}</td>
+                                                                    <td class="center">{{ rb.rb_should_pay_date|date:"Y-m-d" }}</td>
+                                                                    <td class="center">{{ rb.get_rb_type_display }}</td>
+                                                                    <td class="center">{{ rb.rb_note }}</td>
+                                                                    <td class="center">
+                                                                        {% ifequal rb.rb_paid 0 %}
+                                                                        <a class="btn btn-success btn-small" href="/payBill/?propertyid={{ property.id }}&billid={{ rb.id }}&backurl=/billList "><i class="icon-user"></i> Set Paid</a>
+                                                                        {% endifequal %}
+                                                                    </td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                    {% else %}
+                                                        <p align="center">No Bill of this month.</p>
+                                                    {% endif %}
+
+                                                </div>
+                                            </div>
+                                        </div>
+<!--
+                                        <div class="accordion-group">
+                                            <div class="accordion-heading">
+                                                <a class="accordion-toggle bg-teal color-white" data-toggle="collapse" data-parent="#accordion" href="#collapse10">
+                                                    Collapsible Group Item #10
+                                                </a>
+                                            </div>
+                                            <div id="collapse10" class="accordion-body collapse">
+                                                <div class="accordion-inner">
+                                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                                </div>
+                                            </div>
+                                        </div>
+-->
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- =========================================
+                                            END ACCORDION
+                            =========================================== -->
+
+
+
+                            
+                            <!--/dashboar-->
+                        </div><!--/content-body -->
+                    </div><!-- /content -->
+                </div><!-- /span content -->
+                
+
+            </div>
+            </div>
+        </section>
+    {% endblock %}
+
+    {% block footer %}
+
+    {% endblock %}
+
+    {% block footerjs %}
+        {{ block.super }}
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                // try your js
+                
+                // normalize event tab-stat, we hack something here couse the flot re-draw event is any some bugs for this case
+                $('#tab-stat > a[data-toggle="tab"]').on('shown', function(){
+                    if(sessionStorage.mode == 4){ // this hack only for mode side-only
+                        $('body,html').animate({
+                            scrollTop: 0
+                        }, 'slow');
+                    }
+                });
+                
+                // peity chart
+                $("span[data-chart=peity-bar]").peity("bar");
+                
+                // Input tags with select2
+                $('input[name=reseiver]').select2({
+                    tags:[]
+                });
+                
+                // uniform
+                $('[data-form=uniform]').uniform();
+                
+                // wysihtml5
+                $('[data-form=wysihtml5]').wysihtml5()
+                toolbar = $('[data-form=wysihtml5]').prev();
+                btn = toolbar.find('.btn');
+                
+                $.each(btn, function(k, v){
+                    $(v).addClass('btn-mini')
+                });
+                
+                // Server stat circular by knob
+                $("input[data-chart=knob]").knob();
+                
+                // system stat flot
+                d1 = [ ['jan', 231], ['feb', 243], ['mar', 323], ['apr', 352], ['maj', 354], ['jun', 467], ['jul', 429] ];
+                d2 = [ ['jan', 87], ['feb', 67], ['mar', 96], ['apr', 105], ['maj', 98], ['jun', 53], ['jul', 87] ];
+                d3 = [ ['jan', 34], ['feb', 27], ['mar', 46], ['apr', 65], ['maj', 47], ['jun', 79], ['jul', 95] ];
+                
+                var visitor = $("#visitor-stat"),
+                order = $("#order-stat"),
+                user = $("#user-stat"),
+                
+                data_visitor = [{
+                        data: d1,
+                        color: '#00A600'
+                    }],
+                data_order = [{
+                        data: d2,
+                        color: '#2E8DEF'
+                    }],
+                data_user = [{
+                        data: d3,
+                        color: '#DC572E'
+                    }],
+                 
+                
+                options_lines = {
+                    series: {
+                        lines: {
+                            show: true,
+                            fill: true
+                        },
+                        points: {
+                            show: true
+                        },
+                        hoverable: true
+                    },
+                    grid: {
+                        backgroundColor: '#FFFFFF',
+                        borderWidth: 1,
+                        borderColor: '#CDCDCD',
+                        hoverable: true
+                    },
+                    legend: {
+                        show: false
+                    },
+                    xaxis: {
+                        mode: "categories",
+                        tickLength: 0
+                    },
+                    yaxis: {
+                        autoscaleMargin: 2
+                    }
+        
+                };
+
+                // render stat flot
+                $.plot(visitor, data_visitor, options_lines);
+                $.plot(order, data_order, options_lines);
+                $.plot(user, data_user, options_lines);
+                
+                // tootips chart
+                function showTooltip(x, y, contents) {
+                    $('<div id="tooltip" class="bg-black corner-all color-white">' + contents + '</div>').css( {
+                        position: 'absolute',
+                        display: 'none',
+                        top: y + 5,
+                        left: x + 5,
+                        border: '0px',
+                        padding: '2px 10px 2px 10px',
+                        opacity: 0.9,
+                        'font-size' : '11px'
+                    }).appendTo("body").fadeIn(200);
+                }
+
+                var previousPoint = null;
+                $('#visitor-stat, #order-stat, #user-stat').bind("plothover", function (event, pos, item) {
+
+                    if (item) {
+                        if (previousPoint != item.dataIndex) {
+                            previousPoint = item.dataIndex;
+
+                            $("#tooltip").remove();
+                            var x = item.datapoint[0].toFixed(2),
+                            y = item.datapoint[1].toFixed(2);
+                            label = item.series.xaxis.ticks[item.datapoint[0]].label;
+
+                            showTooltip(item.pageX, item.pageY,
+                            label + " = " + y);
+                        }
+                    }
+                    else {
+                        $("#tooltip").remove();
+                        previousPoint = null;
+                    }
+
+                });
+                // end tootips chart
+
+            });
+      
+        </script>
+    {% endblock %}
+
+    </body>
+

@@ -77,6 +77,10 @@ def logout_view(request):
     return HttpResponseRedirect("/")
 
 
+def report(request):
+    pass
+
+
 @login_required
 def property_list(rq):
     properties = []
