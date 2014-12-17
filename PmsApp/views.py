@@ -50,7 +50,7 @@ def index(request):
     user = request.user
     propertyCount = Property.objects.filter(Q(p_manager=user), ~Q(p_status=-1)).count()
     propertylist = Property.objects.filter(Q(p_manager=user), Q(p_status=1))
-    print(propertylist)
+    #print(propertylist)
     tenantCount = TenantInfo.objects.filter(t_manager=user).count()
     billToPayCount = 0
     #bill_list = RentalBill.objects.toPayListOfManger(pay=0, userId=user.id, startdate=addMonth.datetime_offset_by_month(date.today(), -1), enddate=date.today())
@@ -78,7 +78,14 @@ def logout_view(request):
 
 
 def report(request):
-    pass
+    user = request.user
+    propertylist = Property.objects.filter(Q(p_manager=user), Q(p_status=1))
+    year = date.today().year
+    for prop in propertylist:
+        bill_list = RentalBill.objects.filter(Q(rb_property=prop.id), Q(rb_paid=1), Q(rb_should_pay_date__year=year))
+        revenue = 0
+        for bill in bill_list:
+            revenue += bill.
 
 
 @login_required
