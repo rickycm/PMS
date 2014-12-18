@@ -85,7 +85,8 @@ def report(request):
         bill_list = RentalBill.objects.filter(Q(rb_property=prop.id), Q(rb_paid=1), Q(rb_should_pay_date__year=year))
         revenue = 0
         for bill in bill_list:
-            revenue += bill.
+            #revenue += bill.
+            pass
 
 
 @login_required
@@ -220,6 +221,13 @@ def checkin(rq):
         if propid != None:
             try:
                 this_property = Property.objects.get(pk=propid)
+                if this_property.p_manager.id != user.id:
+                    print(this_property.p_manager.id)
+                    print(user.id)
+                    title = u'Error'
+                    errorMessage = u'Property Does not Exist!'
+                    return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
+                                      context_instance=RequestContext(rq))
             except Property.DoesNotExist:
                 title = u'Error'
                 errorMessage = u'Property Does not Exist!'
@@ -229,7 +237,7 @@ def checkin(rq):
         else:
             form = forms.CheckinForm(user=user.id, initial={'action': '1'})
 
-        return render_to_response('checkinForm.html', {'title': u'Check-in', 'form': form},
+        return render_to_response('checkinForm.html', {'title': u'Check-in', 'form': form, 'checkin_propid': propid},
                               context_instance=RequestContext(rq))
     else:
         form = forms.CheckinForm(rq.POST, user=user.id, initial={'action': '1'})
@@ -618,6 +626,7 @@ def tenantForm(rq):
 
     if rq.method == 'GET':
         tenantIdStr = rq.GET.get('tenantId')
+        checkin = rq.GET.get('checkin')
         if tenantIdStr:
             tenantId = int(tenantIdStr)
             try:
@@ -626,12 +635,13 @@ def tenantForm(rq):
             except:
                 form = forms.TenantForm()
         else:
-            form = forms.TenantForm()
+            form = forms.TenantForm(initial={ 'checkin': checkin})
 
         return render_to_response('tenantForm.html', {'title': u'Tenant Form', 'form': form}, context_instance=RequestContext(rq))
     else:
         form = forms.TenantForm(rq.POST)
         if form.is_valid():
+            checkin = form.data['checkin']
             new_tenant = TenantInfo.objects.create(
                 t_name = form.data['t_name'],
                 #t_tpye = int(form.data['t_tpye']),
@@ -646,6 +656,8 @@ def tenantForm(rq):
             )
             new_tenant.save()
             msg = u'Add Tenant Success!'
+            if checkin:
+                return HttpResponseRedirect('/checkinForm/?propertyid=' + checkin)
             return HttpResponseRedirect('/tenantList')
             #return render_to_response('propertyDetail.html', {'title': u'Property Detail', 'property': new_property}, context_instance=RequestContext(rq))
         else:

@@ -181,6 +181,24 @@
             $(document).ready(function() {
                 // try your js
 
+                new_tenant_html = '<a class="btn btn-primary" href="/tenantForm/?checkin={{ checkin_propid }}">New Tenant</a>';
+                var txtName = document.getElementById("id_tenant");
+                var htmlSpan = document.createElement("p");
+                htmlSpan.innerHTML = new_tenant_html;
+                insertAfter(htmlSpan,txtName);
+
+                function insertAfter(newEl, targetEl)
+                {
+                      var parentEl = targetEl.parentNode;
+                      if(parentEl.lastChild == targetEl)
+                      {
+                           parentEl.appendChild(newEl);
+                      }else
+                      {
+                           parentEl.insertBefore(newEl,targetEl.nextSibling);
+                      }
+                }
+
                 $(function() {
                     $( "#id_checkinTime" ).datepicker({changeYear : true, changeMonth : true, dateFormat: 'yy-mm-dd'});
                 });

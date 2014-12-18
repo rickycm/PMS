@@ -171,10 +171,11 @@ class PropertyForm(forms.ModelForm):
 class TenantForm(forms.ModelForm):
 
     t_phone = forms.CharField(widget=forms.NumberInput, label='Phone')
+    checkin = forms.CharField(widget=forms.HiddenInput)
 
     class Meta:
         model = TenantInfo
-        fields = ('t_name', 't_gender', 't_passport', 't_nationality', 't_ethnic', 't_profession', 't_phone', 't_address', 't_email')
+        fields = ('t_name', 't_gender', 't_passport', 't_nationality', 't_ethnic', 't_profession', 't_phone', 't_address', 't_email', 'checkin')
 
     def clean(self):
         cleaned_data = super(TenantForm, self).clean()
