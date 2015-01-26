@@ -440,7 +440,7 @@ def propertyDetail(rq):
                         checkInOuthis = ActionHistory.objects.get(pk=this_property.p_last_checkoutHis)
                         price = PropertyPrice.objects.get(pk=checkInOuthis.h_checkinPrice)
                         priceStr = str(price.pp_currency)+': '+str(price.pp_price)+' - '+str(price.pp_price_name)+'('+str(price.get_pp_rent_circle_display())+')'
-                        tenant = checkInOuthis.h_tenant
+                        tenant = TenantInfo.objects.get(pk=checkInOuthis.h_tenant)
                     else:
                         checkInOuthis = None
                         priceStr = ''
@@ -450,7 +450,7 @@ def propertyDetail(rq):
                         checkInOuthis = ActionHistory.objects.get(pk=this_property.p_last_checkinHis)
                         price = PropertyPrice.objects.get(pk=checkInOuthis.h_checkinPrice)
                         priceStr = str(price.pp_currency)+': '+str(price.pp_price)+' - '+str(price.pp_price_name)+'('+str(price.get_pp_rent_circle_display())+')'
-                        tenant = checkInOuthis.h_tenant
+                        tenant = TenantInfo.objects.get(pk=checkInOuthis.h_tenant)
                     else:
                         checkInOuthis = None
                         priceStr = ''
@@ -465,7 +465,6 @@ def propertyDetail(rq):
                 errorMessage = u'Oops! Property Does not Exist!'
                 return render_to_response("errorMessage.html", {'errorMessage': errorMessage, 'title': title, 'backurl': backurl},
                                       context_instance=RequestContext(rq))
-
 
             return render_to_response('propertyDetail.html', {'title': u'Property Detail', 'property': this_property, 'checkInOuthis': checkInOuthis,
                                                               'priceStr': priceStr, 'tenant': tenant, 'photoList': photo_list}, context_instance=RequestContext(rq))
@@ -675,7 +674,9 @@ def tenantFormEdit(rq):
     tenant = get_object_or_404(TenantInfo, pk=int(tenantIdStr))
 
     if rq.method == 'POST':
+
         form = forms.TenantForm(rq.POST, instance = tenant)
+
         if form.is_valid():
             tenant = form.save()
 
