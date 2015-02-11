@@ -203,5 +203,16 @@ class PropertyPriceForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(PropertyPriceForm, self).clean()
+        property = cleaned_data.get("pp_property")
+        print(property.id)
+        priceList = PropertyPrice.objects.filter(pp_property=property.id)
+        thisprice = cleaned_data.get("pp_price")
+        this_rent_circle = cleaned_data.get("pp_rent_circle")
+        this_currency = cleaned_data.get("pp_currency")
+        print(thisprice)
+        for p_price in priceList:
+            print(p_price)
+            if p_price.pp_price == thisprice and p_price.pp_rent_circle == this_rent_circle and p_price.pp_currency == this_currency:
+                raise forms.ValidationError('Duplicate Price.')
 
         return cleaned_data

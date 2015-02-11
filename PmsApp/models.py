@@ -56,7 +56,7 @@ class UserProfile(models.Model):
     user_type = models.IntegerField(choices=USER_TYPE, default=1)
     type = models.IntegerField(choices=PERSON_TYPE, default=1)
     phone = models.CharField(max_length=20, blank=True, null=True)
-    address = models.CharField(max_length=20, blank=True, null=True)
+    address = models.CharField(max_length=500, blank=True, null=True)
     email = models.EmailField(max_length=1000, verbose_name=u'E-mail', blank=True, null=True)
 
     m_company = models.ForeignKey(ManagerCompany, blank=True, null=True)

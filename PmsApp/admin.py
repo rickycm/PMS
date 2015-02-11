@@ -95,7 +95,7 @@ class MaintenanceBillAdmin(admin.ModelAdmin):
 
 admin.site.register(MaintenanceBill, MaintenanceBillAdmin)
 
-
+'''
 class ManagerCompanyAdmin(admin.ModelAdmin):
     pass
 
@@ -104,3 +104,4 @@ admin.site.register(ManagerCompany, ManagerCompanyAdmin)
 # Re-register UserAdmin
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+'''

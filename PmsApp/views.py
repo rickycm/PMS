@@ -539,6 +539,8 @@ def propertyForm(rq):
             new_property = Property.objects.create(
                 p_name = form.data['p_name'],
                 p_type = int(form.data['p_type']),
+                p_roomtype = form.data['p_roomtype'],
+                p_unittype = form.data['p_unittype'],
                 p_address = form.data['p_address'],
                 p_ownername = form.data['p_ownername'],
                 p_ownerphone = form.data['p_ownerphone'],
@@ -690,7 +692,7 @@ def tenantList(rq):
     user = rq.user
 
     if user.is_superuser == 1:
-        tenantlist = TenantInfo.objects.all()
+        tenantlist = TenantInfo.objects.filter(~Q(t_status=-1))
     else:
         tenantlist = TenantInfo.objects.filter(Q(t_manager=user), ~Q(t_status=-1))
 
