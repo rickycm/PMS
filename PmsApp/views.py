@@ -554,6 +554,7 @@ def propertyForm(rq):
                 p_note = form.data['note'],
             )
             new_property.save()
+            print(new_property.p_note)
 
             file_list = rq.FILES.getlist('photos')
             for afile in file_list:
@@ -587,7 +588,7 @@ def propertyFormEdit(rq):
         form = forms.PropertyForm(rq.POST, instance = prop)
         if form.is_valid():
             prop = form.save()
-
+            print(prop.p_note)
             file_list = rq.FILES.getlist('photos')
             for afile in file_list:
 

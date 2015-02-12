@@ -149,12 +149,12 @@ class CheckoutForm(forms.Form):
 class PropertyForm(forms.ModelForm):
 
     photos = MultiFileField(max_num = 10, min_num = 0, maximum_file_size = 1024*1024*5, help_text='(Select one or more Photos, png/jpg/jpeg Only, Suggest Size: 700*500.)')
-    note = forms.CharField(widget=forms.Textarea(attrs={'cols':'80','rows':'3'}), label='Description', required=False)
+    p_note = forms.CharField(widget=forms.Textarea(attrs={'cols':'80','rows':'3'}), label='Description', required=False)
 
     class Meta:
         model = Property
         fields = ('p_name', 'p_address', 'p_type', 'p_roomtype', 'p_unittype', 'p_ownername', 'p_ownerphone', 'p_owneremail', 'p_ownerid',
-                  'p_buildtime', 'p_rent_circle', 'p_status', 'photos', 'note')
+                  'p_buildtime', 'p_rent_circle', 'p_status', 'photos', 'p_note')
 
     def clean_photos(self):
         photos = self.cleaned_data['photos']
